@@ -1,3 +1,5 @@
+#[WIP] July 2018
+
 export PROJECT_ID=$(gcloud config get-value project)
 export BUCKET=$(gcloud config get-value project)
 export REGION=us-central1
