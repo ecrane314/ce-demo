@@ -6,9 +6,9 @@ def sttAlpha(srcBucket, srcPrefix, destPrefix):
 	
 	# clients
 	spclient = speech.SpeechClient()
-    stclient = storage.Client()
+        stclient = storage.Client()
     
-    #speech config
+        #speech config
 	config = speech.types.RecognitionConfig(
         encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=8000,
