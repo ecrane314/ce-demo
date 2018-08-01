@@ -35,4 +35,5 @@ def speechRecognize(source_audio):
 if __name__=="__main__":
     print("argv[1] is: "+argv[1])
     print("argv[1] is type: "+ str(type(argv[1])))
-    speechRecognize(argv[1], argv[2], argv[3])
+    print("SHOULD NOT SEE THIS, THIS IS -__main__")
+    speechRecognize(argv[1])
