@@ -1,6 +1,6 @@
 from google.cloud import storage
 import speechRecognize
-
+from sys import argv
 
 def bucketRecognize(srcBucket, srcPrefix):
 
@@ -20,7 +20,13 @@ def bucketRecognize(srcBucket, srcPrefix):
         
         print(operation)
         # write results to bucketv
-      #  file = open (i+'transcript', 'xw')
+        #  file = open (i+'transcript', 'xw')
        # file.write(operation.transcript)
        # stclient.writeBlob(srcBucket)
 
+
+if __name__=="__main__":
+    print("argv[1] is: "+argv[1])
+    print("argv[1] is type: "+ str(type(argv[1])))
+    print("SHOULD SEE THIS, THIS IS -__main__")
+    bucketRecognize(argv[1], argv[2])
