@@ -22,13 +22,9 @@ def speechRecognize(source_audio):
     # enable_word_time_offsets=TRUE,  # provide time offsets
     )                
 
-    # speech RecognitionAudio
-    link = source_audio.self_link
-    rec_audio = speech.types.RecognitionAudio(uri=link)
 
     # source recognition operation
-    operation = spclient.recognize(config=rec_config, audio=rec_audio)
-
+    operation = spclient.recognize(config=rec_config, audio=source_audio)
     return operation
 
 

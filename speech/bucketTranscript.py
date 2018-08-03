@@ -15,8 +15,8 @@ def bucketRecognize(srcBucket, srcPrefix):
 
         # speech RecognitionAudio
         link = i.self_link
-        rec_audio = speech.types.RecognitionAudio(uri=link)
-        operation = speechRecognize(rec_audio)
+        print(str(type(link)) + " is " + link)
+        operation = speechRecognize.speechRecognize(link)
         
         print(operation)
         # write results to bucketv
