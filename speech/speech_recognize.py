@@ -26,8 +26,7 @@ def speech_recognize(source_audio):
     rec_audio = speech.types.RecognitionAudio(uri=source_audio)
 
     # recognition operation
-    operation = sp_client.recognize(rec_config, rec_audio)
-    return operation
+    return sp_client.recognize(rec_config, rec_audio)
 
 
 if __name__=="__main__":
