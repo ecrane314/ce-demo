@@ -1,7 +1,7 @@
 from sys import argv
 
 # 16000 is ideal, 8000 for phone audio
-_SAMPLE_RATE=16000
+_SAMPLE_RATE=44100
 
 
 def speech_recognize(source_audio):
@@ -31,7 +31,4 @@ def speech_recognize(source_audio):
 
 
 if __name__=="__main__":
-    print "argv[1] is: "+argv[1]
-    print "argv[1] is type: "+ str(type(argv[1]))
-    print "SHOULD NOT SEE THIS, THIS IS -__main__"
     speech_recognize(argv[1])

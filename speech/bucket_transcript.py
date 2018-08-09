@@ -17,42 +17,13 @@ def bucket_recognize(src_bucket, src_prefix):
     for i in bucket_iter:
 
         # speech RecognitionAudio
-        print"================================="
+        print ("=================================")
 
-        try:
-            gs_link = "gs://" + src_bucket + src_prefix + i.
-            operation = speech_recognize.speech_recognize(gs_link)
-            print operation
-        except:
-            print "Not a WAV, skipping"
-
-
-        # try:
-        #     operation = speech_recognize.speech_recognize(i.self_link)
-        #     print operation
-        # except:
-        #     print "Not i.self_link"
-        #
-        # try:
-        #     operation2 = speech_recognize.speech_recognize(i.path)
-        #     print operation2
-        # except:
-        #     print "Not i.path"
-        #
-        # try:
-        #     operation3 = speech_recognize.speech_recognize(i.public_url)
-        #     print operation3
-        # except:
-        #     print "Not i.public_url"
-        #
-        # try:
-        #     operation4 = speech_recognize.speech_recognize(i.media_link)
-        #     print operation4
-        # except:
-        #     print "Not i.media_link"
-
-
-        break  # remove once working
+        pub_url = i.public_url
+        gs_link = pub_url.replace("https://storage.googleapis.com/", "gs://")
+        print(gs_link)
+        operation = speech_recognize.speech_recognize(gs_link)
+        print (operation)
 
         # write results to bucket
         # file = open (i+'transcript', 'xw')
@@ -61,5 +32,4 @@ def bucket_recognize(src_bucket, src_prefix):
 
 
 if __name__ == "__main__":
-    print "argv[1] is type: "+ str(type(argv[1])) + argv[1]
     bucket_recognize(argv[1], argv[2])
