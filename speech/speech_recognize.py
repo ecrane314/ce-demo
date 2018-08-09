@@ -10,24 +10,23 @@ def speech_recognize(source_audio):
     method. Return transcript"""
 
     # instantiate clients
-    spclient = speech.SpeechClient()
+    sp_client = speech.SpeechClient()
     
     # speech RecognitionConfig
     rec_config = speech.types.RecognitionConfig(
-    encoding = speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
-    sample_rate_hertz = _SAMPLE_RATE,
-    language_code = 'en-US',
-    # max_alternatives, # Not using but available (0-30)
-    profanity_filter = True
-    # use_enhanced=True, # Enhanced models  DEPRECATED
-    # model='phone_call', # Choose an enhanced model DEPRECATED
-    # enable_word_time_offsets=TRUE,  # provide time offsets
+        encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=_SAMPLE_RATE,
+        profanity_filter=True,
+        language_code='en-US'
+        # max_alternatives, # Not using but available (0-30)
+        # enable_word_time_offsets=TRUE,  # provide time offsets
     )                
 
-    rec_audio = speech.types.RecognitionAudio(uri = source_audio) 
+    # speech RecognitionAudio from argument
+    rec_audio = speech.types.RecognitionAudio(uri=source_audio)
 
-    # source recognition operation
-    operation = spclient.recognize(rec_config, rec_audio)
+    # recognition operation
+    operation = sp_client.recognize(rec_config, rec_audio)
     return operation
 
 
