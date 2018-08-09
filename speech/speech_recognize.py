@@ -1,5 +1,4 @@
 from sys import argv
-from google.cloud import speech 
 
 # 16000 is ideal, 8000 for phone audio
 _SAMPLE_RATE=16000
@@ -9,7 +8,8 @@ def speech_recognize(source_audio):
     """Take source audio uri and call google-cloud-speech recognize
     method. Return transcript"""
 
-    # instantiate clients
+    # instantiate client
+    from google.cloud import speech
     sp_client = speech.SpeechClient()
     
     # speech RecognitionConfig

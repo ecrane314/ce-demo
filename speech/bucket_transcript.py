@@ -1,5 +1,4 @@
 from sys import argv
-from google.cloud import storage
 import speech_recognize
 
 
@@ -8,6 +7,7 @@ def bucket_recognize(src_bucket, src_prefix):
     speech_recognize"""
 
     # storage client
+    from google.cloud import storage
     st_client = storage.Client()
 
     # bucket and object iterator
@@ -19,15 +19,39 @@ def bucket_recognize(src_bucket, src_prefix):
         # speech RecognitionAudio
         print"================================="
 
-        operation = speech_recognize.speech_recognize(i.self_link)
-        operation2 = speech_recognize.speech_recognize(i.path)
-        operation3 = speech_recognize.speech_recognize(i.public_url)
-        operation4 = speech_recognize.speech_recognize(i.media_link)
+        try:
+            gs_link = "gs://" + src_bucket + src_prefix + i.
+            operation = speech_recognize.speech_recognize(gs_link)
+            print operation
+        except:
+            print "Not a WAV, skipping"
 
-        print operation
-        print operation2
-        print operation3
-        print operation4
+
+        # try:
+        #     operation = speech_recognize.speech_recognize(i.self_link)
+        #     print operation
+        # except:
+        #     print "Not i.self_link"
+        #
+        # try:
+        #     operation2 = speech_recognize.speech_recognize(i.path)
+        #     print operation2
+        # except:
+        #     print "Not i.path"
+        #
+        # try:
+        #     operation3 = speech_recognize.speech_recognize(i.public_url)
+        #     print operation3
+        # except:
+        #     print "Not i.public_url"
+        #
+        # try:
+        #     operation4 = speech_recognize.speech_recognize(i.media_link)
+        #     print operation4
+        # except:
+        #     print "Not i.media_link"
+
+
         break  # remove once working
 
         # write results to bucket
@@ -37,7 +61,5 @@ def bucket_recognize(src_bucket, src_prefix):
 
 
 if __name__ == "__main__":
-    print "argv[1] is: "+argv[1]
-    print "argv[1] is type: "+ str(type(argv[1]))
-    print "SHOULD SEE THIS, THIS IS -__main__"
+    print "argv[1] is type: "+ str(type(argv[1])) + argv[1]
     bucket_recognize(argv[1], argv[2])
