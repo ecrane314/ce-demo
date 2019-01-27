@@ -1,0 +1,25 @@
+i is insert, escape to normal for commands
+new line additions, o is next line, O above current, a append. Use with i
+A will append to end of line vs a which is at cursor
+these are all inset commands just tells you where they go.
+R will overwrite at cursor.
+hjkl to move cursor in normal mode
+dd will delete a line, p will paste it below current line
+0 to beginning of line, $ to end of line,
+w for next word, e for end of word, b for back to begin of previous word
+/ will search for a term, n for next N for last. ? will search backwards
+% will look for a matching paren, and return
+remember operator [motion] command ie d 10 w remove next 10 words
+u to undo
+multi part commands like writes and searches use : caracter first
+! will force a command like q! to quit without prompt
+w to write, will save unless filename specified then save as
+r to replace single character
+x to delete single character
+c to change unit specified, word, line whatever
+v to visual select then you can d or w or whatever
+:!<unix command> will run a shell
+G is end of file, gg beginning, <line number>+G go to line
+:s/old/new will replace next instance, new/g for the whole line,
+:%s/old/new/g replace instances in whole file, /gc for confirmation
+:r <filename> or <!system command> is retrieve and place here. Copy in:

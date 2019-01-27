@@ -1,0 +1,98 @@
+1 DONE One codebase in revision control, many deploys
+	github repo ecrane314 w/ ssh keys installed.
+	A] create local folder then push to remote repo
+
+
+2 DONE Dependencies explicitely declared and isolated
+	system wide are site packages, scoped to app folder is vendoring or bundling
+	never depend on implicit existence of site packages
+	DEPENDENCY DECLARATION MANIFEST and ISOLATION TOOL to ensure nothing leaks in during execution
+	A] what is dependency manager for GO? any?
+	Use Virtualenv
+	dev machine: pip freeze > requirements.txt
+	execution environmnt: pip install -r requirements.txt
+
+3 Configuration stored in the environment
+	config is likely to change between deploys dev stage prod
+	resource handles to db, memcached backing services. External service credentials, per deploy info
+	STRICT separation of code and config, ask 'could this be open sourced as-is?'
+	In-app config like routes and Spring should be left in code bc don't change much
+	Use environmental variables bc agnostic and low risk of accidental checking into version control
+	Q]	Best way to do this? write your own script to set all variables?
+
+
+4 Backing services as attached resources
+	app consumes over network bau, db, mq, memcached. Local and 3p managed services. MAKE NO DISTINCTION
+	should be able to swap out without code changes, price, licencing, code reuse, production issue 
+	A] pubsub, db, object store all remote 
+
+5 build, release, run strictly separated.
+	Build = code > executable incl dependency collection. Release = build + config. 
+	Run[runtime] = processes launched w/ current release in execution enviornment
+	runtime code changes IMPOSSIBLE. Release rollback possible. any change? new release
+	builds initiated by developers, run initiateid automatically ie scale or restart failed process
+	complexity should be in build where dev is, NOT in run where it can break in the night
+	A] config is entirely separate from code, build + config = release
+
+
+6 Processes, app is >=1 stateless proc
+	share nothing, don't persist. Anything persistent must be in stateful backing service
+	process heap space and filesystem can be cache and scratch space. never assume it will live there
+	a subsequent requrest will likely be served by a different process
+	R]	django-asset-packager does at runtime -- 12 factor prefers build time
+	NO STICKY SESSIONS, violation. future requests cant be guaranteed routing to same proc
+	use expiring DB like Redis or MemcacheD
+
+
+7 Export Services via Port Binding
+	Webapps sometimes run inside webserver container. Think Java apps
+	running inside Tomcat and PHP running inside Apache HTTPD. Don't do
+	that. We're self contained and don't use runtime injection into
+	execution environment. Export HTTP as a service by binding to a port
+	and listen for requests ie http://localhost:5000/ Use user space and
+	dependency declaration to get your web server. Contract with
+	execution environment is to bind to a port
+
+8 Concurrency, processes are first class citizens
+	PHP processes may be children of Apache. Java is opposite, big block
+	of resources and manage as threads. 12 factor processes don't 
+	daemonize or write PID files. Rely instaed on OS process mngr to 
+	respond to crashed processes, handle user-initiated restarts.
+	Tools like foreman in development environment. Scale is expressed as 
+	number of processes running. Workload diversity as process types
+
+9 Disposable processes to emphasize fast startup and shutdown
+	Fast elastic scaling, minimize startup time, few seconds from launch
+	command to started and ready for commands. Agility for new releases.
+	Receive SIGTERM, stop receiving requests, finish current request,
+	if a worker, return job to the queue, hit the bricks. Implied that
+	requests are short. If long, client reconnects when connection killed.
+	Robust against sudden death, use robust queueing backend that will
+	timeout
+
+10 Dev/prod parity
+	Avoid the time gape between development changes and production.
+	Personel gap where dev writes and ops deploy. Tools gap where
+	developers use nginx sqlite and osx while prod uses apache, mysql,
+	and linux. etc. Keep this gap as small as possible. Code gets deployed
+	hours or minutes after written, and devs watch production behavior.
+	Small incompatibilities become big runtime issues and ruin benefits
+	of continuous delivery
+
+11 Treat logs as event streams
+	Visibility into running application. Never concern yourself with
+	routing or storage of log output stream. Don't write to or manage
+	log files. Instead write unbuffered stream to stdout. 
+	In dev, developer sees this in the foreground. 
+	In prod, its captured by execution environment, collated and routed for long-term archival.
+	Not visible or configurable by the app. Send to splunk or hadoop
+	to introspect over time. Graph trends (reqs/min), or alerting
+
+12 Admin tasks as one-off processes
+	Should run in identical env as regular process of app. Run against
+	a release, using same code and config as any process. Admin code must
+	ship with app code to avoid sync issues. In dev, invoke one-off
+	processes by direct shell command in app check-out directory. In a
+	production deploy, devs can use ssh or other remote command
+	
+
