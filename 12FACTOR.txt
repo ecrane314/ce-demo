@@ -1,14 +1,14 @@
 1 DONE One codebase in revision control, many deploys
 	github repo ecrane314 w/ ssh keys installed.
-	A] create local folder then push to remote repo
+	create local folder then push to remote repo
 
 
 2 DONE Dependencies explicitely declared and isolated
 	system wide are site packages, scoped to app folder is vendoring or bundling
 	never depend on implicit existence of site packages
-	DEPENDENCY DECLARATION MANIFEST and ISOLATION TOOL to ensure nothing leaks in during execution
-	A] what is dependency manager for GO? any?
-	Use Virtualenv
+	DEPENDENCY DECLARATION MANIFEST and ISOLATION TOOL?? to ensure nothing leaks in during execution
+	Dependency manager language specific. pip, npm, etc
+	Use virtualenv for python
 	dev machine: pip freeze > requirements.txt
 	execution environmnt: pip install -r requirements.txt
 
@@ -41,7 +41,7 @@
 	a subsequent requrest will likely be served by a different process
 	R]	django-asset-packager does at runtime -- 12 factor prefers build time
 	NO STICKY SESSIONS, violation. future requests cant be guaranteed routing to same proc
-	use expiring DB like Redis or MemcacheD
+	use expiring DB like redis or memcached
 
 
 7 Export Services via Port Binding
