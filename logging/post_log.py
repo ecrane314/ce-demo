@@ -1,21 +1,24 @@
 import json
 import logging
 
+#https://googleapis.dev/python/logging/latest/index.html
 from google.cloud import logging
 from google.auth import jwt
 
-
+null="""
 service_account = json.load(open("/home/evancrane/ce-demo2-log.json"))
 audience = "https://www.googleapis.com/auth/logging.write"
 credentials = jwt.Credentials.from_service_account_info(
     service_account, audience=audience
 )
-
+"""
 
 def write_log(logger_name = "test_log"):
-    client = logging.Client("ce-demo2", credentials)
-    client.get_default_handler()
-    client.setup_logging()
+    client = logging.Client()
+
+#TODO Unclear what these do or whether they're needed
+#    handler =  client.get_default_handler()
+#   client.setup_logging()
 
 
     # This log can be found in the Cloud Logging console under 'Custom Logs'.
@@ -36,4 +39,3 @@ def write_log(logger_name = "test_log"):
 
 if __name__ == "__main__":
     write_log()
-
