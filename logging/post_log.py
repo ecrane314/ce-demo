@@ -1,5 +1,13 @@
-import json
-import logging
+#!/usr/bin/env python
+"""
+https://cloud.google.com/logging/docs/quickstart-python#linux
+Use this export statement at shell to set your credentials before runtime
+export GOOGLE_APPLICATION_CREDENTIALS=/home/evancrane/ce-demo2-bq-analyst.json
+"""
+
+#TODO Logging within Python?  https://realpython.com/python-json/
+#import json
+#import logging
 
 #https://googleapis.dev/python/logging/latest/index.html
 from google.cloud import logging
