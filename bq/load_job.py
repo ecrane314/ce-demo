@@ -15,7 +15,7 @@ from google.cloud import bigquery_storage_v1beta1
 #from google.cloud import storage
 
 #Can override this default at runtime
-DATASETID = "ce-demo2:bq_demo_set"
+DATASETID = "bq_demo_set"
 TABLEID = "icoad_2005_dst"
 SOURCEURI = "gs://ce-demo2/bq/icoads_core_2005-*.csv"
 
@@ -46,7 +46,7 @@ def load_bq_from_gcs(uri = SOURCEURI, dataset_id = DATASETID, table_id = TABLEID
     #   bigquery.SchemaField("name", "STRING"),
     #   bigquery.SchemaField("post_abbr", "STRING"),
     #]
-    job_config.autodetect = 1
+    job_config.autodetect = True
     
     # Leading row of csv input are headers
     job_config.skip_leading_rows = 1
@@ -54,7 +54,7 @@ def load_bq_from_gcs(uri = SOURCEURI, dataset_id = DATASETID, table_id = TABLEID
     # The source format defaults to CSV, so the line below is optional.
     job_config.source_format = bigquery.SourceFormat.CSV
 
-
+    print(uri + " ==break point")
     load_job = bq_client.load_table_from_uri(
         uri, dataset_ref.table(table_id), job_config=job_config
     )  # API request
