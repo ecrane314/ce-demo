@@ -19,8 +19,27 @@ DATASETID = "bq_demo_set"
 TABLEID = "icoad_2005_dst"
 SOURCEURI = "gs://ce-demo2/bq/icoads_core_2005-*.csv"
 
-def load_bq_from_gcs(uri = SOURCEURI, dataset_id = DATASETID, table_id = TABLEID):
+print(DATASETID + " ==break point DATASETID pre func")
+print(TABLEID + " ==break point TABLEID pre func")
+print(SOURCEURI + " ==break point SOURCEURI pre func")
+
+
+def load_bq_from_gcs(dataset_id = DATASETID, gcs_uri = "gs://ce-demo2/bq/icoads_core_2005-*.csv",
+    table_id = TABLEID):
     """Submit a BigQuery load job which reads from GCS."""
+
+    print("===============")
+    print(SOURCEURI + " ==break point SOURCEURI begin func")
+    print(gcs_uri + " ==break point gcs_uri begin func")
+
+    print(DATASETID + " ==break point DATASETID begin func")
+    print(dataset_id + " ==break point dataset_id begin func")
+
+    print(TABLEID + " ==break point TABLEID begin func")
+    print(table_id + " ==break point table_id begin func")
+    print("===============")
+
+
     # Get token using local credentials
     credentials, your_project_id = google.auth.default(
         scopes=["https://www.googleapis.com/auth/cloud-platform"]
@@ -39,6 +58,8 @@ def load_bq_from_gcs(uri = SOURCEURI, dataset_id = DATASETID, table_id = TABLEID
     # Pointer to our target dataset
     dataset_ref = bq_client.dataset(dataset_id)
     
+    print(gcs_uri + " ==break point clients made, job not yet configured")
+
     # Create our load job configuration and define schema inline
     job_config = bigquery.LoadJobConfig()
     #TODO form and load external json schema file
@@ -54,9 +75,9 @@ def load_bq_from_gcs(uri = SOURCEURI, dataset_id = DATASETID, table_id = TABLEID
     # The source format defaults to CSV, so the line below is optional.
     job_config.source_format = bigquery.SourceFormat.CSV
 
-    print(uri + " ==break point")
+    print(gcs_uri + " ==break point")
     load_job = bq_client.load_table_from_uri(
-        uri, dataset_ref.table(table_id), job_config=job_config
+        gcs_uri, dataset_ref.table(table_id), job_config=job_config
     )  # API request
     print("Starting job {}".format(load_job.job_id))
 
