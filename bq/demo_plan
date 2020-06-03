@@ -1,9 +1,0 @@
->> UI, 
-Ingestion, upload, gcs
-Run Query Dry Run
-CDAP
-
->> CLI, same Query
-
->> Python Client Library
-bq_pandas.py 
