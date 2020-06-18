@@ -9,6 +9,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/home/MyHomeDir/<SERVICE ACCT PRV KEY>.jso
 3-- Export BigQuery public dataset table from marketplace to GCS in CSV
 """
 
+import sys
 from google.cloud import bigquery
 
 # sample, override as desired
@@ -66,4 +67,5 @@ def load_bq_from_xml(dataset_id=DATASETID, gcs_uri=SOURCEURI,
 
 
 if __name__ == "__main__":
-    load_bq_from_xml(DATASETID)
+ #   load_bq_from_xml(DATASETID)
+    print(sys.argv)
