@@ -5,5 +5,5 @@
 import google
 
 #TODO Input topic and output table
-inputTopic	The Pub/Sub input topic to read from, in the format of projects/<project>/topics/<topic>.
-outputTableSpec	The BigQuery output table location, in the format of <my-project>:<my-dataset>.<my-table>
+#inputTopic	The Pub/Sub input topic to read from, in the format of projects/<project>/topics/<topic>.
+#outputTableSpec	The BigQuery output table location, in the format of <my-project>:<my-dataset>.<my-table>
