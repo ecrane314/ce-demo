@@ -1,3 +1,6 @@
+#Change to reflect your Project, Buckets, Network, [Subnet if not default]
+
+
 mvn -Pdataflow-runner compile exec:java \
       -Dexec.mainClass=org.apache.beam.examples.WordCount \
       -Dexec.args="--project=ce-demo2 \
@@ -5,4 +8,5 @@ mvn -Pdataflow-runner compile exec:java \
       --output=gs://ce-demo2/dataflow/output \
       --runner=DataflowRunner \
       --region=us-central1 \
-      --network=custom-vpc"
+      --network=custom-vpc
+      --subnetwork=regions/us-central1/subnetworks/sn-central1"

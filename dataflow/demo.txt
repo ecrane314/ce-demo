@@ -1,0 +1,8 @@
+
+https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
+
+auth command and key in home folder
+
+command with VPC and GCS info in  word-count-settings
+
+
