@@ -1,0 +1,14 @@
+ node cloudiot_mqtt_example_nodejs.js \
+    mqttDeviceDemo \
+    --projectId=ce-demo2 \
+    --cloudRegion=us-central1 \
+    --registryId=raspi-registry \
+    --deviceId=laptop-device \
+    --privateKeyFile=rsa_private.pem \
+    --numMessages=25 \
+    --algorithm=RS256
+
+
+
+
+gcloud pubsub subscriptions pull --auto-ack projects/ce-demo2/subscriptions/my-subscription
