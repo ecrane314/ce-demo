@@ -1,11 +1,12 @@
-Coral Foglamp Lab Friction Log
+**Coral Foglamp Lab Friction Log**
+
 evancrane@
 Sep 16 2020
 
-Internal link
-https://docs.google.com/document/d/1D8Ed47S6h7z2MUvLN3fOqf3qrY4Az9-wtbigBQ0vCCw/edit#
+[Lab link]
+(https://docs.google.com/document/d/1D8Ed47S6h7z2MUvLN3fOqf3qrY4Az9-wtbigBQ0vCCw/edit#)
 
-#Repository
+# Repository
 https://github.com/kingman/coral-environ-stream-processing
 
 Set-env.sh script could be converted to a config file that's sourced. There could be extra lines to define project variables. Modifying a config file allows better persistence if rerunning this step after cloudshell times out. Using bash "source" command works better than running it as a script given subroutine context.
@@ -14,7 +15,7 @@ Step 1 about Cloud Shell could include requirements list ie docker (incl. maven)
 
 Terraform main.tf uses default network, will fail in Dataflow if custom networks in use, as was my case. Added network and subnet definition to fix.
 
-"Verify the result data" This skips over the North and South bridge configuration in foglamp. Should we expect data to flow yet?
+**"Verify the result data"** This skips over the North and South bridge configuration in foglamp. Should we expect data to flow yet?
 
 Why not configure the dev board before establishing the dataflow pipeline and cloud resources which cost money if left unatended? You also can't confirm that your data pipeline is working correctly until you have a source. Fake source to start?
 
@@ -32,7 +33,7 @@ Errors were encountered while processing:
  foglamp
 E: Sub-process /usr/bin/dpkg returned an error code (1)
 ```
-Enviro board - Don't have enviro board, skipped this section. Consider splitting the enviro and person apt install commands so that the branches of the lab can be followed independently. The enviro board installation errored out "impossible situation", likely because an enviro board is not present.
+**Enviro board**  Don't have enviro board, skipped this section. Consider splitting the enviro and person apt install commands so that the branches of the lab can be followed independently. The enviro board installation errored out "impossible situation", likely because an enviro board is not present.
 
 ```
 mendel@undefined-snail:~$ sudo apt clean && sudo apt auto-remove
@@ -173,4 +174,6 @@ mendel@undefined-snail:~$
 
 
 **Installing GCP North Plugin in FogLAMP**
-Why not point to the readthedocs on the public site? In this way they can follow any updates to the public site. Please include some info or a link as to why we're using the google cert. This step seems strange and isn't required for regular iot demo work. Is this a foglamp requirement? Step 6 describes copying the key to the store, which I imagine is similar to the GUI version in the public doc. I followed GUI and north bridge doesn't seem to be pushing anything to the pubsub topic.  https://foglamp.readthedocs.io/en/latest/plugins/foglamp-north-gcp/index.html#upload-your-certificates 
+Why not point to the readthedocs on the public site? In this way they can follow any updates to the public site. Please include some info or a link as to why we're using the google cert. This step seems strange and isn't required for regular iot demo work. Is this a foglamp requirement? Step 6 describes copying the key to the store, which I imagine is similar to the GUI version in the public doc. I followed GUI and north bridge doesn't seem to be pushing anything to the pubsub topic.  https://foglamp.readthedocs.io/en/latest/plugins/foglamp-north-gcp/index.html#upload-your-certificates
+
+What do "enabled, exlusive, and internal" mean? They are not defined in the documentation and it might help in troubleshooting. 
