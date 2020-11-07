@@ -1,0 +1,196 @@
+{
+	"BigQuery Schema": [
+		{
+			"name": "unique_key",
+			"title": "unique_key",
+			"constraints": {
+				"required": true,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "complaint_type",
+			"title": "complaint_type",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "complaint_description",
+			"title": "complaint_description",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "owning_department",
+			"title": "owning_department",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "source",
+			"title": "source",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "status",
+			"title": "status",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "status_change_date",
+			"title": "status_change_date",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#dateTime"
+			}
+		},
+		{
+			"name": "created_date",
+			"title": "created_date",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#dateTime"
+			}
+		},
+		{
+			"name": "last_update_date",
+			"title": "last_update_date",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#dateTime"
+			}
+		},
+		{
+			"name": "close_date",
+			"title": "close_date",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#dateTime"
+			}
+		},
+		{
+			"name": "incident_address",
+			"title": "incident_address",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "street_number",
+			"title": "street_number",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#int"
+			}
+		},
+		{
+			"name": "street_name",
+			"title": "street_name",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "city",
+			"title": "city",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "incident_zip",
+			"title": "incident_zip",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#int"
+			}
+		},
+		{
+			"name": "county",
+			"title": "county",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "state_plane_x_coordinate",
+			"title": "state_plane_x_coordinate",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#float"
+			}
+		},
+		{
+			"name": "state_plane_y_coordinate",
+			"title": "state_plane_y_coordinate",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#float"
+			}
+		},
+		{
+			"name": "latitude",
+			"title": "latitude",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#float"
+			}
+		},
+		{
+			"name": "longitude",
+			"title": "longitude",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#float"
+			}
+		},
+		{
+			"name": "location",
+			"title": "location",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "council_district_code",
+			"title": "council_district_code",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "map_page",
+			"title": "map_page",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "map_tile",
+			"title": "map_tile",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		}
+	]
+}

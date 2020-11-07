@@ -1,25 +1,43 @@
+11/7/2020
+https://cloud.google.com/dataflow/docs/guides/templates/provided-batch?hl=en_US#gcstexttobigquery
+#JSON is created in gs://cedemo2/dataflow/schema.JSON
+#data file csv is in 
+
+
+
+
+
+
+# HYPOTHESES
+# Subscription templates will be stateful by pulling (ack) from existing subscriptions
+# Topic tepmlates will be stateless because they'll make their own subscription
+# as part of runtime. Perhaps better for testing
+# The java libraries in github creates JSON configs to pass to Dataflow runner
+# The files stored in the versioned buckets are JSON outputs.
+
+
+# Dataflow Templates in Google Cloud Docs
 # https://cloud.google.com/dataflow/docs/guides/templates/provided-streaming#cloudpubsubtobigquery
 
+# Dataflow Java Source in GitHub
 #https://github.com/GoogleCloudPlatform/DataflowTemplates/blob/master/src/main/java/com/google/cloud/teleport/templates/PubSubToBigQuery.java
-https://cloud.google.com/solutions/performing-etl-from-relational-database-into-bigquery
 
+# Full Tutorial in GCP Docs
+#https://cloud.google.com/solutions/performing-etl-from-relational-database-into-bigquery
 
 #TODO Output tables in BQ must exist before running pipeline
 #TODO pick raspi data topic in pubsub
-
 #TODO Define Input topic and output table below
-
-#inputTopic	The Pub/Sub input topic to read from, in the format of projects/<project>/topics/<topic>.
-#outputTableSpec	The BigQuery output table location, in the format of <my-project>:<my-dataset>.<my-table>
-
+# inputTopic	The Pub/Sub input topic to read from, in the format of projects/<project>/topics/<topic>.
+# outputTableSpec	The BigQuery output table location, in the format of <my-project>:<my-dataset>.<my-table>
 #TODO pick latest template, see instructions at #1 gs://dataflow-templates/VERSION/PubSub_to_BigQuery
 
 
 
-# HYPOTHESIS
-# Subscription templates will be stateful by pulling (ack) from existing subscriptions
-# Topic tepmlates will be stateless because they'll make their own subscription
-# as part of runtime. Perhaps better for testing
+
+
+
+#Separate Java Maven work
 
 # https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
 # auth command and key in home folder
