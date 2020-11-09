@@ -1,9 +1,14 @@
+11/8/2020
+From Dataflow docs CONCEPTS section: What is a Template?
+Classic template DAG stored in file in GCS. Flex template stored in container in GCR
+Template separate dev from execution.
+https://cloud.google.com/dataflow/docs/concepts/dataflow-templates?hl=en_US
+
+
 11/7/2020
 https://cloud.google.com/dataflow/docs/guides/templates/provided-batch?hl=en_US#gcstexttobigquery
 #JSON is created in gs://cedemo2/dataflow/schema.JSON
 #data file csv is in 
-
-
 
 
 
