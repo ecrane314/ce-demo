@@ -1,3 +1,16 @@
+- Dump schema from current table
+      In my example that's BigQuery... strip down to columsn I wants
+      bq show --schema --format prettyjson bigquery-public-data:austin_311.311_request > schema.json
+      drop columns, adjust descriptions, names, and types
+
+- If couldn't dump to file, create your json schema file with the schema specs
+      https://cloud.google.com/bigquery/docs/schemas#specifying_a_json_schema_file
+
+
+
+11/9
+Adding steps above
+
 11/8/2020
 From Dataflow docs CONCEPTS section: What is a Template?
 Classic template DAG stored in file in GCS. Flex template stored in container in GCR
