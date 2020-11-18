@@ -5,6 +5,8 @@
 #Adjust architecture
 #TODO add uname -m for architecture inline?
 
+sudo apt-get -y install automake python-dev python3-dev libpython2.7-dev libpython3.7-dev jq git
+
 echo "deb [arch=x86_64] http://archives.dianomic.com/foglamp/nightly/ubuntu1804/x86_64/ ./" | sudo tee -a /etc/apt/sources.list.d/foglamp.list
 
 wget -O - http://archives.dianomic.com/KEY.gpg | sudo apt-key add -
