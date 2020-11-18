@@ -1,6 +1,21 @@
 **Coral Foglamp Lab Friction Log**
 
 evancrane@
+Nov 18 2020
+Catalina announcement ahead of time for mdt
+VM must be Ubuntu to have x86 installation. No Debian. run uname -m for architecture
+Can SSH to test machine, don't need to create keys and do authorized_keys step
+. <SPACE> script file to set params
+Should push the OS specifics of flash step into instructions. SSH key steps are the same
+Change repo key to your architecture buster/ 
+centos76/                              
+mendel/      
+rhel76/       
+stretch/    
+ubuntu1804/  
+
+
+evancrane@
 Sep 16 2020
 
 [Lab link]

@@ -15,12 +15,13 @@
 # limitations under the License.
 
 
-#EC Additions
+#EC Additions vs lab
 export GOOGLE_CLOUD_PROJECT=ce-demo2
 export GOOGLE_CLOUD_REGION=us-central1
-export GOOGLE_CLOUD_ZONE=us-central1-c
-export GOOGLE_APPLICATION_CREDENTIALS=/home/evancrane/ce-demo2-editor.json
+export GOOGLE_CLOUD_ZONE=us-central1-a
 
+#replace with your key
+export GOOGLE_APPLICATION_CREDENTIALS=/home/evancrane/ce-demo2-editor.json
 
 
 export TF_SERVICE_ACCOUNT_NAME=tf-service-account
