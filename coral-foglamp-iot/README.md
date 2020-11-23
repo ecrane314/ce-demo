@@ -1,22 +1,17 @@
 **Coral Foglamp Lab Friction Log**
 
-evancrane@
-Nov 18 2020
-Catalina announcement ahead of time for mdt
-VM must be Ubuntu to have x86 installation. No Debian. run uname -m for architecture
-Can SSH to test machine, don't need to create keys and do authorized_keys step
-. <SPACE> script file to set params
-Should push the OS specifics of flash step into instructions. SSH key steps are the same
-Change repo key to your architecture buster/ 
-centos76/                              
-mendel/      
-rhel76/       
-stretch/    
-ubuntu1804/  
+### Nov 18 2020 - Second pass, modifying for VM usage
+#### evancrane@
+- Catalina announcement ahead of time for mdt
+- x86_64 desktop built only for Ubuntu 18.04 or RHEL 7.6, no Debian. run `uname -m` for architecture
+- Can SSH to test machine, don't need to create keys and do authorized_keys step
+- Use `.<SPACE>./set-variables.sh` space notation for script file to set params in current context, not child
+- Should push the OS specifics of flash step into instructions. SSH key steps are the same
+- Change repo URL and prefix to match your architecture buster/ centos76/ mendel/ rhel76/ stretch/  ubuntu1804/
+- [ERROR] Ran into issue with post-install script, realized I'm on Debian
 
-
+### Sep 16 2020 - First pass, using Coral DevBoard
 evancrane@
-Sep 16 2020
 
 [Lab link]
 (https://docs.google.com/document/d/1D8Ed47S6h7z2MUvLN3fOqf3qrY4Az9-wtbigBQ0vCCw/edit#)
