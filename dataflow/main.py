@@ -42,11 +42,11 @@ def run(project, job, template, parameters=None):
     template = 'gs://dataflow-templates/latest/GCS_Text_to_BigQuery'
     parameters = {
        "javascriptTextTransformFunctionName": "transform",
-       "JSONPath": "PATH_TO_BIGQUERY_SCHEMA_JSON",
-       "javascriptTextTransformGcsPath": "PATH_TO_JAVASCRIPT_UDF_FILE",
-       "inputFilePattern":"PATH_TO_YOUR_TEXT_DATA",
+       "JSONPath": "gs://ce-demo2/dataflow/311_request_schema.json",
+       "javascriptTextTransformGcsPath": "gs://ce-demo2/dataflow/311_request_udf.js",
+       "inputFilePattern":"gs://ce-demo2/dataflow/311_request.csv",
        "outputTable":"ce-demo2:bq_demo.311_landing",
-       "bigQueryLoadingTemporaryDirectory": "PATH_TO_TEMP_DIR_ON_GCS"
+       "bigQueryLoadingTemporaryDirectory": "gs://ce-demo2/dataflow/tmp"
     }
     # environment = { 
     #    "zone": "us-central1-f",

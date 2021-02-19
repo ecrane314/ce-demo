@@ -7,6 +7,18 @@
       https://cloud.google.com/bigquery/docs/schemas#specifying_a_json_schema_file
 
 
+- Run from gcloud 
+gcloud dataflow jobs run 20201109-003 \
+--gcs-location gs://dataflow-templates/latest/GCS_Text_to_BigQuery \
+--region=us-central1 --network=custom-vpc --subnetwork=regions/us-central1/subnetworks/sn-central1 \
+--parameters \
+javascriptTextTransformFunctionName=transform,\
+JSONPath=gs://ce-demo2/dataflow/311_request_schema.json,\
+javascriptTextTransformGcsPath=gs://ce-demo2/dataflow/311_request_udf.js,\
+inputFilePattern=gs://ce-demo2/dataflow/311_request.json,\
+outputTable=ce-demo2:bq_demo.311_landing,\
+bigQueryLoadingTemporaryDirectory=gs://ce-demo2/dataflow/tmp/
+
 
 11/9
 Adding steps above

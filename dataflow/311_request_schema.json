@@ -1,110 +1,112 @@
-[
-  {
-    "description": "The service request tracking number.",
-    "mode": "NULLABLE",
-    "name": "unique_key",
-    "type": "STRING"
-  },
-  {
-    "description": "",
-    "mode": "NULLABLE",
-    "name": "complaint_type",
-    "type": "STRING"
-  },
-  {
-    "description": "Service request type",
-    "mode": "NULLABLE",
-    "name": "complaint_description",
-    "type": "STRING"
-  },
-  {
-    "description": "Owning department of Service request type.",
-    "mode": "NULLABLE",
-    "name": "owning_department",
-    "type": "STRING"
-  },
-  {
-    "description": "Contact method Service request was received from. Mass entry requests are submitted by dept. in groups after work is completed.",
-    "mode": "NULLABLE",
-    "name": "source",
-    "type": "STRING"
-  },
-  {
-    "description": "Service request status. Duplicate statuses indicate that issue had previously been reported recently.",
-    "mode": "NULLABLE",
-    "name": "status",
-    "type": "STRING"
-  },
-  {
-    "description": "Date of last Service request status change. Status changes occur when service request moves from one status to another. I.E. new to open, open to closed.",
-    "mode": "NULLABLE",
-    "name": "status_change_date",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Date Service request was created.",
-    "mode": "NULLABLE",
-    "name": "created_date",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Date Service request was updated. Last date Service request received updates. Updates may include creation, status changes, or changes to data in Service request.",
-    "mode": "NULLABLE",
-    "name": "last_update_date",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Date Service request was closed.",
-    "mode": "NULLABLE",
-    "name": "close_date",
-    "type": "TIMESTAMP"
-  },
-  {
-    "description": "Service location of Service request.",
-    "mode": "NULLABLE",
-    "name": "incident_address",
-    "type": "STRING"
-  },
-  {
-    "description": "Parsed location information. Street number.",
-    "mode": "NULLABLE",
-    "name": "street_number",
-    "type": "STRING"
-  },
-  {
-    "description": "Parsed location information. Street name.",
-    "mode": "NULLABLE",
-    "name": "street_name",
-    "type": "STRING"
-  },
-  {
-    "description": "Parsed location information. City.",
-    "mode": "NULLABLE",
-    "name": "city",
-    "type": "STRING"
-  },
-  {
-    "description": "Parsed location information. Zip code.",
-    "mode": "NULLABLE",
-    "name": "incident_zip",
-    "type": "INTEGER"
-  },
-  {
-    "description": "Parsed location information. County.",
-    "mode": "NULLABLE",
-    "name": "county",
-    "type": "STRING"
-  },
-  {
-    "description": "Service request location latitude coordinate.",
-    "mode": "NULLABLE",
-    "name": "latitude",
-    "type": "FLOAT"
-  },
-  {
-    "description": "Service request location longitude coordinate.",
-    "mode": "NULLABLE",
-    "name": "longitude",
-    "type": "FLOAT"
-  }
-]
+{
+  "BigQuery Schema" : [
+    {
+      "description": "The service request tracking number.",
+      "mode": "NULLABLE",
+      "name": "unique_key",
+      "type": "STRING"
+    },
+    {
+      "description": "",
+      "mode": "NULLABLE",
+      "name": "complaint_type",
+      "type": "STRING"
+    },
+    {
+      "description": "Service request type",
+      "mode": "NULLABLE",
+      "name": "complaint_description",
+      "type": "STRING"
+    },
+    {
+      "description": "Owning department of Service request type.",
+      "mode": "NULLABLE",
+      "name": "owning_department",
+      "type": "STRING"
+    },
+    {
+      "description": "Contact method Service request was received from. Mass entry requests are submitted by dept. in groups after work is completed.",
+      "mode": "NULLABLE",
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "description": "Service request status. Duplicate statuses indicate that issue had previously been reported recently.",
+      "mode": "NULLABLE",
+      "name": "status",
+      "type": "STRING"
+    },
+    {
+      "description": "Date of last Service request status change. Status changes occur when service request moves from one status to another. I.E. new to open, open to closed.",
+      "mode": "NULLABLE",
+      "name": "status_change_date",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Date Service request was created.",
+      "mode": "NULLABLE",
+      "name": "created_date",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Date Service request was updated. Last date Service request received updates. Updates may include creation, status changes, or changes to data in Service request.",
+      "mode": "NULLABLE",
+      "name": "last_update_date",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Date Service request was closed.",
+      "mode": "NULLABLE",
+      "name": "close_date",
+      "type": "TIMESTAMP"
+    },
+    {
+      "description": "Service location of Service request.",
+      "mode": "NULLABLE",
+      "name": "incident_address",
+      "type": "STRING"
+    },
+    {
+      "description": "Parsed location information. Street number.",
+      "mode": "NULLABLE",
+      "name": "street_number",
+      "type": "STRING"
+    },
+    {
+      "description": "Parsed location information. Street name.",
+      "mode": "NULLABLE",
+      "name": "street_name",
+      "type": "STRING"
+    },
+    {
+      "description": "Parsed location information. City.",
+      "mode": "NULLABLE",
+      "name": "city",
+      "type": "STRING"
+    },
+    {
+      "description": "Parsed location information. Zip code.",
+      "mode": "NULLABLE",
+      "name": "incident_zip",
+      "type": "INTEGER"
+    },
+    {
+      "description": "Parsed location information. County.",
+      "mode": "NULLABLE",
+      "name": "county",
+      "type": "STRING"
+    },
+    {
+      "description": "Service request location latitude coordinate.",
+      "mode": "NULLABLE",
+      "name": "latitude",
+      "type": "FLOAT"
+    },
+    {
+      "description": "Service request location longitude coordinate.",
+      "mode": "NULLABLE",
+      "name": "longitude",
+      "type": "FLOAT"
+    }
+  ]
+}
