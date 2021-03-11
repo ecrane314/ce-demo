@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 """
 https://cloud.google.com/logging/docs/quickstart-python#linux
-Use this export statement at shell to set your credentials before runtime
+https://googleapis.dev/python/logging/latest/index.html
+Use an export statement at shell to set your credentials before runtime
 export GOOGLE_APPLICATION_CREDENTIALS=/home/evancrane/ce-demo2-bq-analyst.json
+https://docs.python.org/3/howto/logging.html#logging-basic-tutorial
 """
 
-#Logging within Python?  https://realpython.com/python-json/
 import logging
 import os
 
-#https://googleapis.dev/python/logging/latest/index.html
 from google.cloud import logging as glogging
 #from google.auth import jwt
 
 
 def write_log():
     """Write local test log"""
-    #https://docs.python.org/3/howto/logging.html#logging-basic-tutorial
     logging.basicConfig(filename='scratch.log', \
         format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
         #encoding='utf-8'  avail in python 3.9
