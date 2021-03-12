@@ -1,0 +1,10 @@
+2021-03-09 11:09:01,833 DEBUG This is a Debug item
+2021-03-09 11:09:01,834 INFO This is info log
+2021-03-09 11:09:01,834 WARNING This is a warning log message
+2021-03-09 11:09:01,834 ERROR This is an error
+2021-03-09 11:09:01,834 CRITICAL This is critical, STOP
+2021-03-09 11:53:25,218 DEBUG This is a Debug item
+2021-03-09 11:53:25,219 INFO This is info log
+2021-03-09 11:53:25,219 WARNING This is a warning log message
+2021-03-09 11:53:25,220 ERROR This is an error
+2021-03-09 11:53:25,220 CRITICAL This is critical, STOP

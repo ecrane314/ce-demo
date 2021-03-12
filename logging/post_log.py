@@ -38,6 +38,8 @@ def upload_log(logger_name="test_log"):
     # This log can be found in the Cloud Logging console under 'Custom Logs'.
     logger = client.logger(logger_name)
 
+    handler = client.setup_logging()
+
     # Make a simple text log
     logger.log_text('Hello, world!')
 
