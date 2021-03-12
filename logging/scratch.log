@@ -1,0 +1,22 @@
+2021-03-11 15:14:52,497 DEBUG This is a Debug item
+2021-03-11 15:14:52,497 INFO This is info log
+2021-03-11 15:14:52,497 WARNING This is a warning log message
+2021-03-11 15:14:52,497 ERROR This is an error
+2021-03-11 15:14:52,498 CRITICAL This is critical, STOP
+2021-03-11 15:17:08,873 DEBUG This is a Debug item
+2021-03-11 15:17:08,873 INFO This is info log
+2021-03-11 15:17:08,873 WARNING This is a warning log message
+2021-03-11 15:17:08,873 ERROR This is an error
+2021-03-11 15:17:08,873 CRITICAL This is critical, STOP
+2021-03-11 15:17:08,874 DEBUG Checking None for explicit credentials as part of auth process...
+2021-03-11 15:17:08,874 DEBUG Checking Cloud SDK credentials as part of auth process...
+2021-03-11 15:17:08,874 DEBUG Cloud SDK credentials not found on disk; not using them
+2021-03-11 15:17:08,874 DEBUG Checking for App Engine runtime as part of auth process...
+2021-03-11 15:17:08,875 DEBUG No App Engine library was found so cannot authentication via App Engine Identity Credentials.
+2021-03-11 15:17:08,876 DEBUG Making request: GET http://169.254.169.254
+2021-03-11 15:17:11,880 WARNING Compute Engine Metadata server unavailable onattempt 1 of 3. Reason: timed out
+2021-03-11 15:17:11,880 DEBUG Making request: GET http://169.254.169.254
+2021-03-11 15:17:14,885 WARNING Compute Engine Metadata server unavailable onattempt 2 of 3. Reason: timed out
+2021-03-11 15:17:14,886 DEBUG Making request: GET http://169.254.169.254
+2021-03-11 15:17:17,890 WARNING Compute Engine Metadata server unavailable onattempt 3 of 3. Reason: timed out
+2021-03-11 15:17:17,891 WARNING Authentication failed using Compute Engine authentication due to unavailable metadata server.

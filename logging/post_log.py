@@ -15,7 +15,7 @@ from google.cloud import logging as glogging
 
 
 def write_log():
-    """Write local test log"""
+    """Write local test log and return logger object"""
     logging.basicConfig(filename='scratch.log', \
         format='%(asctime)s %(levelname)s %(message)s', level=logging.DEBUG)
         #encoding='utf-8'  avail in python 3.9
@@ -25,7 +25,7 @@ def write_log():
     logging.warning('This is a warning log message')
     logging.error("This is an error")
     logging.critical("This is critical, STOP")
-
+    return logging.getLogger()
 
 def upload_log(logger_name="test_log"):
     """Write local log file to Google Cloud Logs """
@@ -39,7 +39,7 @@ def upload_log(logger_name="test_log"):
     logger = client.logger(logger_name)
 
     # Make a simple text log
-    logger.log_text('Hello, world!')
+    logger.log_text('Hello, world! IN UPLOAD')
 
     # Simple text log with severity.
     logger.log_text('Goodbye, world!', severity='ERROR')
@@ -59,4 +59,6 @@ def upload_log(logger_name="test_log"):
 
 
 if __name__ == "__main__":
-    write_log()
+    local_log = write_log()
+    upload_log(local_log)
+    print(type(local_log))
