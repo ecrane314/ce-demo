@@ -1,0 +1,34 @@
+https://coral.ai/examples/
+https://github.com/google-coral/tflite
+https://github.com/google-coral/edgetpu
+https://github.com/google-coral/examples-camera
+
+
+edgetpu_demo --stream
+n to switch
+2 vs 60 fps. Line moves at 120 feet/minute
+imagine multiple models
+1st one defines cars or pork chops
+2nd one defines the grade of the product
+
+
+2 of dozens of pretrained models
+start with something everyday, then train on your domain specifically
+
+cd camera/
+edgetpu_detect_server --model ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite 
+
+
+cd camera/
+edgetpu_classify_server --model mobilenet_v2_1.0_224_quant_edgetpu.tflite --labels imagenet_labels.txt
+golf ball
+sunglasses
+coffee cup
+keyboard
+mouse
+
+cd tflite/python/classification/examples
+python3 classify_image.py -i images/parrot.jpg -l models/inat_bird_labels.txt -m models/mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite
+
+also on CPU
+

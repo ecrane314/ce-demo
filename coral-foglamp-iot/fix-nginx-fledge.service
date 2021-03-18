@@ -1,0 +1,10 @@
+echo '[Unit]
+Before=nginx.target
+Wants=nginx.target
+
+[Service]
+ExecStart=/usr/local/bin/fix-nginx.sh
+
+[Install]
+WantedBy=multi-user.target' | sudo tee -a /lib/systemd/system/fix-nginx.service
+
