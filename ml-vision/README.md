@@ -15,3 +15,10 @@ pip3 install --user mendel-development-tool
 # Counting objects
 
 #TODO Read and do https://www.pyimagesearch.com/2018/08/13/opencv-people-counter/
+
+
+sudo apt-get install libx11-dev libgtk-3-dev  
+sudo apt-get install libopenblas-dev liblapack-dev  
+
+Installing dlib in target environment  
+https://www.pyimagesearch.com/2018/01/22/install-dlib-easy-complete-guide/  
