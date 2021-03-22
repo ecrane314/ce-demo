@@ -14,4 +14,7 @@ pip3 install --user mendel-development-tool
 
 # Counting objects
 
-#TODO Read and do https://www.pyimagesearch.com/2018/08/13/opencv-people-counter/
+#TODO Read and do https://www.pyimagesearch.com/2018/08/13/opencv-people-counter/  
+"Examples of object tracking algorithms include MedianFlow, MOSSE, GOTURN, kernalized correlation filters, and discriminative correlation filters, to name a few."
+
+
