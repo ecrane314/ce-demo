@@ -18,3 +18,5 @@ Error: Could not parse the line, not a valid json: Cannot find field: annotation
 Switching to Classic AI Platform, AutoML Experience should be the same
 Use the Natural Language options in GCP console tray, then create an entity dataset
 https://console.cloud.google.com/natural-language?_ga=2.124070538.1266633889.1617667956-416308210.1591721327&authuser=2
+
+Used file from https://pubmed.ncbi.nlm.nih.gov/32150360/ for testing. Downloaded pubmed format as txt
