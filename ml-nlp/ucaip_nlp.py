@@ -23,7 +23,7 @@ with open(in_file_path, "r") as gssample:
 
     output = open(outfile,'a')
     #CAUTION: Be careful sorting if multiple calls per file, using false
-    #output.write(json.dumps(call, indent=4, sort_keys=False))
+    output.write(json.dumps(call, indent=4, sort_keys=False))
     output.close()
 
     transcript = call['transcript']['transcript'][1:2]  #[pretty_transcript]
