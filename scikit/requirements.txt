@@ -2,3 +2,6 @@ scikit-learn==0.24.1
 numpy==1.20.2
 seaborn==0.11.1
 matplotlib==3.4.1
+
+# Need this for matplotlib graphics tkinter it tk interface. Tk is widgets package
+# sudo apt-get install python3-tk
