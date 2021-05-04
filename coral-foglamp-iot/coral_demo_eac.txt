@@ -32,3 +32,6 @@ python3 classify_image.py -i images/parrot.jpg -l models/inat_bird_labels.txt -m
 
 also on CPU
 
+mendel@undefined-snail:~$ sudo apt install python3-edgetpuvision
+
+Does iot core give tokens that allow for GCS or just to iot API? Think image upload scenario not using IOT core because $$
