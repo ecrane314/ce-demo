@@ -1,6 +1,6 @@
 // gs://dataflow-templates/latest/GCS_Text_to_BigQuery
-// risky, but everygreen
-// ce-demo2:bq_demo
+// risky using latest template, but everygreen
+// PROJECT:DATASET
 
 
 function transform(line) {

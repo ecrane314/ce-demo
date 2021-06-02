@@ -1,4 +1,4 @@
-# EvanCrane@, adapted Nov 09 2020
+# EvanCrane@, first adapted Nov 09 2020
 
 #!/usr/bin/env python
 #

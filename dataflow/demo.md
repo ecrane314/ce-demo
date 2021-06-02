@@ -1,13 +1,15 @@
-- Dump schema from current table
+# [Beam] Pipeline Options
+1. Dump schema from current table
       In my example that's BigQuery... strip down to columsn I wants
       bq show --schema --format prettyjson bigquery-public-data:austin_311.311_request > schema.json
       drop columns, adjust descriptions, names, and types
 
-- If couldn't dump to file, create your json schema file with the schema specs
+1. If couldn't dump to file, create your json schema file with the schema specs
       https://cloud.google.com/bigquery/docs/schemas#specifying_a_json_schema_file
 
 
-- Run from gcloud 
+1. Run from gcloud 
+```
 gcloud dataflow jobs run 20201109-003 \
 --gcs-location gs://dataflow-templates/latest/GCS_Text_to_BigQuery \
 --region=us-central1 --network=custom-vpc --subnetwork=regions/us-central1/subnetworks/sn-central1 \
@@ -18,7 +20,7 @@ javascriptTextTransformGcsPath=gs://ce-demo2/dataflow/311_request_udf.js,\
 inputFilePattern=gs://ce-demo2/dataflow/311_request.json,\
 outputTable=ce-demo2:bq_demo.311_landing,\
 bigQueryLoadingTemporaryDirectory=gs://ce-demo2/dataflow/tmp/
-
+```
 
 11/9
 Adding steps above
@@ -38,42 +40,41 @@ https://cloud.google.com/dataflow/docs/guides/templates/provided-batch?hl=en_US#
 
 
 
-# HYPOTHESES
-# Subscription templates will be stateful by pulling (ack) from existing subscriptions
-# Topic tepmlates will be stateless because they'll make their own subscription
-# as part of runtime. Perhaps better for testing
-# The java libraries in github creates JSON configs to pass to Dataflow runner
-# The files stored in the versioned buckets are JSON outputs.
+# Hypothesis
+1. Subscription templates will be stateful by pulling (ack) from existing subscriptions
+1.  Topic tepmlates will be stateless because they'll make their own subscription as part of runtime. Perhaps better for testing.
+1. The java libraries in github creates JSON configs to pass to Dataflow runner
+1. The files stored in the versioned buckets are JSON outputs.
 
 
-# Dataflow Templates in Google Cloud Docs
-# https://cloud.google.com/dataflow/docs/guides/templates/provided-streaming#cloudpubsubtobigquery
+## Dataflow Templates in Google Cloud Docs
+https://cloud.google.com/dataflow/docs/guides/templates/provided-streaming#cloudpubsubtobigquery
 
-# Dataflow Java Source in GitHub
-#https://github.com/GoogleCloudPlatform/DataflowTemplates/blob/master/src/main/java/com/google/cloud/teleport/templates/PubSubToBigQuery.java
+## Dataflow Java Source in GitHub
+https://github.com/GoogleCloudPlatform/DataflowTemplates/blob/master/src/main/java/com/google/cloud/teleport/templates/PubSubToBigQuery.java
 
-# Full Tutorial in GCP Docs
-#https://cloud.google.com/solutions/performing-etl-from-relational-database-into-bigquery
+## Full Tutorial in GCP Docs
+https://cloud.google.com/solutions/performing-etl-from-relational-database-into-bigquery
 
 #TODO Output tables in BQ must exist before running pipeline
 #TODO pick raspi data topic in pubsub
 #TODO Define Input topic and output table below
-# inputTopic	The Pub/Sub input topic to read from, in the format of projects/<project>/topics/<topic>.
-# outputTableSpec	The BigQuery output table location, in the format of <my-project>:<my-dataset>.<my-table>
+- inputTopic	The Pub/Sub input topic to read from, in the format of projects/<project>/topics/<topic>.
+- outputTableSpec	The BigQuery output table location, in the format of <my-project>:<my-dataset>.<my-table>
 #TODO pick latest template, see instructions at #1 gs://dataflow-templates/VERSION/PubSub_to_BigQuery
 
 
 
 
 
+# Java Maven
 
-#Separate Java Maven work
+ https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
+ auth command and key in home folder
+ - see WorkCount.java in this dir for more info
 
-# https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
-# auth command and key in home folder
-# see WorkCount.java in this dir for more info
-
-# Change to reflect your Project, Buckets, Network, [Subnet if not default]
+## Change to reflect your Project, Buckets, Network, [Subnet if not default]
+```
 mvn -Pdataflow-runner compile exec:java \
       -Dexec.mainClass=org.apache.beam.examples.WordCount \
       -Dexec.args="--project=ce-demo2 \
@@ -83,3 +84,4 @@ mvn -Pdataflow-runner compile exec:java \
       --region=us-central1 \
       --network=custom-vpc
       --subnetwork=regions/us-central1/subnetworks/sn-central1"
+```
