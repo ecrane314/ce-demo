@@ -32,9 +32,9 @@ def parse_nlp_result(response):
         # response, # entire string
         response.sentences[0].text.content,
         response.language,
-        response.document_sentiment.score
+        response.document_sentiment.score,
         # Added to include entities
-        # response.entities[0]
+        response.entities[0]
     ]
 
 def run():
@@ -66,26 +66,22 @@ def run():
 
 
     # Assign DataflowRunner as runner for pipeline, required as includes auth flow
-    options.view_as(beam.options.pipeline_options.StandardOptions).runner = 'DataflowRunner' # 'DirectRunner'
+    # options.view_as(beam.options.pipeline_options.StandardOptions).runner = 'DataflowRunner' # 'DirectRunner'
     
 
     # Pipeline
     p = beam.Pipeline(options=options)
     (p 
-    #   BigQuerySource is deprecated since 2.25.0. Use ReadFromBigQuery instead.
-     #| 'bigquery' >> beam.io.Read(beam.io.BigQuerySource(
-     #    query=bq_source_query,
-     #    use_standard_sql=True))
       | 'Read bq'  >> beam.io.ReadFromBigQuery(
           query=bq_source_query,
           use_standard_sql=True)
       | 'txt'      >> beam.Map(lambda x : x['text'])
       | 'doc'      >> beam.Map(lambda x : nlp.Document(x, type='PLAIN_TEXT'))
-    #  | 'todict'   >> beam.Map(lambda x : nlp.Document.to_dict(x))
+#     | 'todict'   >> beam.Map(lambda x : nlp.Document.to_dict(x))
       | 'nlp'      >> nlp.AnnotateText(features_requested, timeout=10)
       | 'parse'    >> beam.Map(parse_nlp_result)
-      | 'gcs'      >> beam.io.WriteToText('gs://{}/output2.txt'.format(BUCKET), num_shards=1)
-#TODO   | 'write to bq'  >> beam.io.WriteToBigQuery()
+      | 'gcs'      >> beam.io.WriteToText('gs://{}/output.txt'.format(BUCKET), num_shards=1)
+#TODO | 'write to bq'  >> beam.io.WriteToBigQuery()
     )
     result = p.run()
     result.wait_until_finish()
