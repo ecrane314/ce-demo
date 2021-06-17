@@ -10,27 +10,43 @@ PREREQS Enable API
 
 from google.cloud import texttospeech
 
+
+# ----------BEGIN CONFIG----------
 # Effects profile, like phone call
 # https://cloud.google.com/text-to-speech/docs/audio-profiles
-PROFILE = 'telephony-class-application'
-OUTPUT_FILE = '$HOME/Downloads/output-IVR.mp3'
+FX_PROFILE = 'telephony-class-application'
+# https://cloud.google.com/text-to-speech/docs/voices
+VOICE = 'en-US-Wavenet-J'
+GENDER = 'MALE'  #FEMALE, MALE, NEUTRAL
+#VOICE_SPEED = 
+#VOICE_PITCH = 
+INPUT_FILE = 'tts-input.txt'  #Longer form and no input in repo
+OUTPUT_FILE = 'output-IVR.mp3' #Change if updating config
+# ----------END CONFIG----------
+
 
 # Instantiates a client
 client = texttospeech.TextToSpeechClient()
 
 # Set the text input to be synthesized
-synthesis_input = texttospeech.SynthesisInput(text="And Caesar wept, for there were no more worlds to conquer")
+# synthesis_input = texttospeech.SynthesisInput(text="And Caesar wept, for there were no more worlds to conquer")
+with open(INPUT_FILE, 'r') as file:
+    file_input = file.read()
+synthesis_input = texttospeech.SynthesisInput(text=file_input)
+
 
 # Build the voice request, select the language code ("en-US") and the ssml
 # voice gender ("neutral")
 voice = texttospeech.VoiceSelectionParams(
-    language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+    language_code="en-US", 
+    ssml_gender=texttospeech.SsmlVoiceGender.MALE,
+    name = VOICE
 )
 
 # Select the type of audio file you want returned
 audio_config = texttospeech.AudioConfig(
     audio_encoding=texttospeech.AudioEncoding.MP3, 
-    effects_profile_id=[PROFILE]
+    effects_profile_id=[FX_PROFILE]
 )
 
 # Perform the text-to-speech request on the text input with the selected

@@ -21,8 +21,8 @@ from datetime import datetime
 import apache_beam as beam
 
 
-PROJECT='sc-nlp'
-BUCKET='sc-nlp-x'
+PROJECT='ce-demo1'
+BUCKET='ce-demo1'
 REGION='us-central1'
 #TODO add table to write results DEST_TABLE=''
 
