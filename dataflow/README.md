@@ -1,3 +1,11 @@
+### Katas Notes
+
+1. Case sensitive, beam.create != beam.Create
+1. DoFn classes, you must override def process(self, element)
+1. Map gets passed the name of a function, but ParDo you need to call the class() which extends DoFn.
+1. beam.Map 1:1 and beam.Flatmap 1:M often use lambda and are simplifications of DoFn
+1. functions and classes can be defined within functions
+
 # [Beam] Pipeline Options
 1. Dump schema from current table
       In my example that's BigQuery... strip down to columsn I wants
