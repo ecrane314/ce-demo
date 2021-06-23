@@ -1,10 +1,22 @@
-### Katas Notes
+### Katas Notes and Hints to Myself
 
 1. Case sensitive, beam.create != beam.Create
-1. DoFn classes, you must override def process(self, element)
-1. Map gets passed the name of a function, but ParDo you need to call the class() which extends DoFn.
+1. DoFn classes, you must override process function eg def process(self, element)
+1. Map gets passed the name of a function, but ParDo you need to call the constructor ie class() which extends DoFn.
 1. beam.Map 1:1 and beam.Flatmap 1:M often use lambda and are simplifications of DoFn
 1. functions and classes can be defined within functions
+1. PColls are descriptions of operations, can't be directly written to files or manipulated. 
+1. Only make sense in context of a ptransform
+1. Remember tuples are immutable and lists not. Place tuples inside of lists for added capability
+1. Using index [0] in a function which is used in a beam.Map() call means each element gets called. Eg CoGroupByKey result is passed to a map function, each item will become [0] for a call to the function.
+1. beam.CombineFn() defines how to work on data, then CombineGlobally is used in the pipeline to call your CombineFn. CombineGlobally(CombineFn())
+1. A. For each batch, the create_accumulator method is invoked to create a fresh initial "accumulator" value representing the combination of zero values.
+ B. For each input value in the batch, the add_input method is invoked to combine more values with the accumulator for that batch.
+C. The merge_accumulators method is invoked to combine accumulators from separate batches into a single combined output accumulator value, once all of the accumulators have had all the input value in their batches added to them. This operation is invoked repeatedly, until there is only one accumulator value left.
+D. The extract_output operation is invoked on the final accumulator to get the output value.
+1. Partition must know number of parts at graph construction time. Can't calculate midway
+1. zip(list1, list2) packs it up and zip(*lists) unpacks it. Works also on lists NOT craeted with zip
+1. zip is not idempotent and can be consumed. list(<zip object>) returns the list, then [] second time
 
 # [Beam] Pipeline Options
 1. Dump schema from current table

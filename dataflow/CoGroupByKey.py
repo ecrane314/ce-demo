@@ -30,11 +30,9 @@ phones = p | 'CreatePhones' >> beam.Create(phones_list)
 # docs: "Given an input dict of serializable keys (called “tags”) to 0 or more PCollections"
 results = ({'emails_tag': emails, 'phones_tag': phones} | beam.CoGroupByKey()
 )
-(first, second) = results
 
 results | beam.io.WriteToText('scratch.txt')
-print('first' + str(first))
-print('second' + str(second))
+print('results' + str(results))
 
 """
 ===SAMPLE OUTPUT FROM ABOVE, scratch.txt====
