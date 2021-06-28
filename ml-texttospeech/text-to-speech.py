@@ -16,12 +16,12 @@ from google.cloud import texttospeech
 # https://cloud.google.com/text-to-speech/docs/audio-profiles
 FX_PROFILE = 'telephony-class-application'
 # https://cloud.google.com/text-to-speech/docs/voices
-VOICE = 'en-US-Wavenet-J'
+VOICE = 'en-GB-Wavenet-A'
 GENDER = 'MALE'  #FEMALE, MALE, NEUTRAL
 #VOICE_SPEED = 
 #VOICE_PITCH = 
 INPUT_FILE = 'tts-input.txt'  #Longer form and no input in repo
-OUTPUT_FILE = 'output-IVR.mp3' #Change if updating config
+OUTPUT_FILE = 'en-GB-Wavenet-A-Female-IVR.mp3' #Change if updating config
 # ----------END CONFIG----------
 
 
@@ -35,11 +35,13 @@ with open(INPUT_FILE, 'r') as file:
 synthesis_input = texttospeech.SynthesisInput(text=file_input)
 
 
+#TODO Move everything from here down to function definition
+
 # Build the voice request, select the language code ("en-US") and the ssml
 # voice gender ("neutral")
 voice = texttospeech.VoiceSelectionParams(
     language_code="en-US", 
-    ssml_gender=texttospeech.SsmlVoiceGender.MALE,
+    ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
     name = VOICE
 )
 
