@@ -5,7 +5,7 @@ Note: ssml must be well-formed according to:
     https://www.w3.org/TR/speech-synthesis/
 
 SEED    https://cloud.google.com/text-to-speech/docs/create-audio
-PREREQS Enable API 
+PREREQS Enable API
 """
 
 from google.cloud import texttospeech
@@ -16,12 +16,12 @@ from google.cloud import texttospeech
 # https://cloud.google.com/text-to-speech/docs/audio-profiles
 FX_PROFILE = 'telephony-class-application'
 # https://cloud.google.com/text-to-speech/docs/voices
-VOICE = 'en-GB-Wavenet-A'
+VOICE = 'en-US-Wavenet-I'
 GENDER = 'MALE'  #FEMALE, MALE, NEUTRAL
-#VOICE_SPEED = 
-#VOICE_PITCH = 
+#VOICE_SPEED =
+#VOICE_PITCH =
 INPUT_FILE = 'tts-input.txt'  #Longer form and no input in repo
-OUTPUT_FILE = 'en-GB-Wavenet-A-Female-IVR.mp3' #Change if updating config
+OUTPUT_FILE = 'en-US-Wavenet-I-Male-IVR.mp3' #Change if updating config
 # ----------END CONFIG----------
 
 
@@ -40,14 +40,14 @@ synthesis_input = texttospeech.SynthesisInput(text=file_input)
 # Build the voice request, select the language code ("en-US") and the ssml
 # voice gender ("neutral")
 voice = texttospeech.VoiceSelectionParams(
-    language_code="en-US", 
+    language_code="en-US",
     ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
     name = VOICE
 )
 
 # Select the type of audio file you want returned
 audio_config = texttospeech.AudioConfig(
-    audio_encoding=texttospeech.AudioEncoding.MP3, 
+    audio_encoding=texttospeech.AudioEncoding.MP3,
     effects_profile_id=[FX_PROFILE]
 )
 
