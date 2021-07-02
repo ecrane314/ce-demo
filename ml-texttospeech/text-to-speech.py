@@ -15,10 +15,10 @@ from google.cloud import texttospeech
 # Effects profile, like phone call
 # https://cloud.google.com/text-to-speech/docs/audio-profiles
 FX_PROFILE = 'telephony-class-application'
+VOICE_SPEED = 0.95  # 0.25 to 4.0, 1 is normal
 # https://cloud.google.com/text-to-speech/docs/voices
 VOICE = 'en-US-Wavenet-I'
 GENDER = 'MALE'  #FEMALE, MALE, NEUTRAL
-#VOICE_SPEED =
 #VOICE_PITCH =
 INPUT_FILE = 'tts-input.txt'  #Longer form and no input in repo
 OUTPUT_FILE = 'en-US-Wavenet-I-Male-IVR.mp3' #Change if updating config
@@ -48,6 +48,7 @@ voice = texttospeech.VoiceSelectionParams(
 # Select the type of audio file you want returned
 audio_config = texttospeech.AudioConfig(
     audio_encoding=texttospeech.AudioEncoding.MP3,
+    speaking_rate = VOICE_SPEED,
     effects_profile_id=[FX_PROFILE]
 )
 
