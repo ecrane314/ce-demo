@@ -13,97 +13,11 @@
 # limitations under the License.
 
 import sys
-
-# [START functions_helloworld_http]
-# [START functions_http_content]
 from flask import escape
 
-# [END functions_helloworld_http]
-# [END functions_http_content]
-
-
-# [START functions_helloworld_get]
-def hello_get(request):
-    """HTTP Cloud Function.
-    Args:
-        request (flask.Request): The request object.
-        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
-    Returns:
-        The response text, or any set of values that can be turned into a
-        Response object using `make_response`
-        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
-    Note:
-        For more information on how Flask integrates with Cloud
-        Functions, see the `Writing HTTP functions` page.
-        <https://cloud.google.com/functions/docs/writing/http#http_frameworks>
-    """
-    return 'Hello World!'
-# [END functions_helloworld_get]
-
-
-# [START functions_helloworld_http]
-def hello_http(request):
-    """HTTP Cloud Function.
-    Args:
-        request (flask.Request): The request object.
-        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
-    Returns:
-        The response text, or any set of values that can be turned into a
-        Response object using `make_response`
-        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
-    """
-    request_json = request.get_json(silent=True)
-    request_args = request.args
-
-    if request_json and 'name' in request_json:
-        name = request_json['name']
-    elif request_args and 'name' in request_args:
-        name = request_args['name']
-    else:
-        name = 'World'
-    return 'Hello {}!'.format(escape(name))
-# [END functions_helloworld_http]
-
-
-# [START functions_helloworld_pubsub]
-def hello_pubsub(event, context):
-    """Background Cloud Function to be triggered by Pub/Sub.
-    Args:
-         event (dict):  The dictionary with data specific to this type of
-                        event. The `@type` field maps to
-                         `type.googleapis.com/google.pubsub.v1.PubsubMessage`.
-                        The `data` field maps to the PubsubMessage data
-                        in a base64-encoded string. The `attributes` field maps
-                        to the PubsubMessage attributes if any is present.
-         context (google.cloud.functions.Context): Metadata of triggering event
-                        including `event_id` which maps to the PubsubMessage
-                        messageId, `timestamp` which maps to the PubsubMessage
-                        publishTime, `event_type` which maps to
-                        `google.pubsub.topic.publish`, and `resource` which is
-                        a dictionary that describes the service API endpoint
-                        pubsub.googleapis.com, the triggering topic's name, and
-                        the triggering event type
-                        `type.googleapis.com/google.pubsub.v1.PubsubMessage`.
-    Returns:
-        None. The output is written to Cloud Logging.
-    """
-    import base64
-
-    print("""This Function was triggered by messageId {} published at {} to {}
-    """.format(context.event_id, context.timestamp, context.resource["name"]))
-
-    if 'data' in event:
-        name = base64.b64decode(event['data']).decode('utf-8')
-    else:
-        name = 'World'
-    print('Hello {}!'.format(name))
-# [END functions_helloworld_pubsub]
-
-
-# [START functions_helloworld_storage]
-def hello_gcs(event, context):
+def redact_gcs(event, context):
     """Background Cloud Function to be triggered by Cloud Storage.
-       This generic function logs relevant data when a file is changed.
+       Calls DLP function redact_image_all_text().
 
     Args:
         event (dict):  The dictionary with data specific to this type of event.
@@ -115,14 +29,89 @@ def hello_gcs(event, context):
         None; the output is written to Stackdriver Logging
     """
 
-    print('Event ID: {}'.format(context.event_id))
-    print('Event type: {}'.format(context.event_type))
+    import os
+
+
+    PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    OUTPUT_BUCKET = "gs://dlp-outbound"
+
+
+    #print('Event ID: {}'.format(context.event_id))
+    #print('Event type: {}'.format(context.event_type))
     print('Bucket: {}'.format(event['bucket']))
     print('File: {}'.format(event['name']))
-    print('Metageneration: {}'.format(event['metageneration']))
+    #print('Metageneration: {}'.format(event['metageneration']))
     print('Created: {}'.format(event['timeCreated']))
-    print('Updated: {}'.format(event['updated']))
-# [END functions_helloworld_storage]
+    #print('Updated: {}'.format(event['updated']))
+
+    # Get Image
+    pull_cmd = "gsutil cp gs://{}/{} .".format(event['bucket'], event['name'])
+    os.system(pull_cmd)
+
+    # Process image for DLP
+    out_file = event['name'] + 'out'
+    redact_image_all_text(PROJECT, event['name'], out_file)
+
+    # Push result to output bucket
+    push_cmd = "gsutil cp {} gs://{}/".format(out_file, OUT_BUCKET)
+    os.system(push_cmd)
+
+
+
+def redact_image_all_text(
+    project, filename, output_filename,
+):
+    """Uses the Data Loss Prevention API to redact all text in an image.
+
+    Args:
+        project: The Google Cloud project id to use as a parent resource.
+        filename: The path to the file to inspect.
+        output_filename: The path to which the redacted image will be written.
+
+    Returns:
+        None; the response from the API is printed to the terminal.
+    """
+    # Import the client library
+    import google.cloud.dlp
+
+    # Instantiate a client.
+    dlp = google.cloud.dlp_v2.DlpServiceClient()
+
+    # Construct the image_redaction_configs, indicating to DLP that all text in
+    # the input image should be redacted.
+    image_redaction_configs = [{"redact_all_text": True}]
+
+    # Construct the byte_item, containing the file's byte data.
+    with open(filename, mode="rb") as f:
+        byte_item = {"type_": google.cloud.dlp_v2.FileType.IMAGE, "data": f.read()}
+
+    # Convert the project id into a full resource id.
+    parent = f"projects/{project}"
+
+    # Call the API.
+    response = dlp.redact_image(
+        request={
+            "parent": parent,
+            "image_redaction_configs": image_redaction_configs,
+            "byte_item": byte_item,
+        }
+    )
+
+    # Write out the results.
+    with open(output_filename, mode="wb") as f:
+        f.write(response.redacted_image)
+
+    print(
+        "Wrote {byte_count} to {filename}".format(
+            byte_count=len(response.redacted_image), filename=output_filename
+        )
+    )
+
+
+
+
+
+
 
 
 # [START functions_http_content]
