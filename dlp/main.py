@@ -11,9 +11,58 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+#
+# EAC NOTES
+# - Set config
+# - On deploy, set service account if needed for permissions
+# - On deploy, gcfunction name must match entry function from source
+# - Build source will be zipped and copied as is to a GCS bucket
+# - Function build artifacts will live in separate bucket
+#  gcloud functions deploy redact_gcs --region us-central1 --service-account \
+#        <svc@account.com> --trigger-bucket dlp-inbound --runtime python38
+#
+
 
 import sys
+import os
 from flask import escape
+from google.cloud import storage
+from google.cloud import dlp
+
+
+def redact_gcs2(event, context):
+    """
+    Pull image, redact, push image using client libraries
+    """
+    # CLIENT
+    stor = storage.Client()
+
+    # CONFIG
+    # NOTE  project = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    # ENV variable only exists in GCE, not GCF runtime
+    project = 'sc-nlp'
+    output_bucket = "dlp-outbound"
+    output_file = "/tmp/" + event['name'] + "out"
+    
+    #TODO
+    #input_bytes = event['name']
+    
+    #output_file = redact_image_all_text2(input_bytes)
+    # write output_file to output_bucket
+
+
+def redact_image_all_text2(input_bytes):
+    # ALTERNATIVE CONSTRUCTUOR dlp = google.cloud.dlp_v2.DlpServiceClient()
+    dlp = dlp.Client()
+
+    # TODO
+    request_bytes = input_bytes
+    redacted_bytes = response[content]
+
+    return redacted_bytes
+
+
 
 def redact_gcs(event, context):
     """Background Cloud Function to be triggered by Cloud Storage.
@@ -29,11 +78,12 @@ def redact_gcs(event, context):
         None; the output is written to Stackdriver Logging
     """
 
-    import os
 
-
-    PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
-    OUTPUT_BUCKET = "gs://dlp-outbound"
+    # CONFIG
+    output_bucket = "dlp-outbound"
+    #project = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    # that ENV only exists in GCE, not GCF runtime
+    project = 'sc-nlp'
 
 
     #print('Event ID: {}'.format(context.event_id))
@@ -44,16 +94,21 @@ def redact_gcs(event, context):
     print('Created: {}'.format(event['timeCreated']))
     #print('Updated: {}'.format(event['updated']))
 
+
+    # DEBUG Get environment of worker env
+    print(os.environ)
+    print(os.system("whoami"))
+
     # Get Image
     pull_cmd = "gsutil cp gs://{}/{} .".format(event['bucket'], event['name'])
     os.system(pull_cmd)
 
     # Process image for DLP
-    out_file = event['name'] + 'out'
-    redact_image_all_text(PROJECT, event['name'], out_file)
+    output_file = "/tmp/" + event['name'] + "out"
+    redact_image_all_text(project, event['name'], output_file)
 
     # Push result to output bucket
-    push_cmd = "gsutil cp {} gs://{}/".format(out_file, OUT_BUCKET)
+    push_cmd = "gsutil cp {} gs://{}/".format(output_file, output_bucket)
     os.system(push_cmd)
 
 
@@ -106,8 +161,6 @@ def redact_image_all_text(
             byte_count=len(response.redacted_image), filename=output_filename
         )
     )
-
-
 
 
 
