@@ -18,10 +18,13 @@ EAC NOTES
  - Set config
  - On deploy, set service account if needed for permissions
  - On deploy, gcfunction name must match entry function from source
+ - On deploy, --trigger-bucket will be the bucket to 'watch' for new uploads
  - Build source will be zipped and copied as is to a GCS bucket
  - Function build artifacts will live in separate bucket
   gcloud functions deploy redact_gcs --region us-central1 --service-account \
         <svc@account.com> --trigger-bucket dlp-inbound --runtime python38
+
+https://cloud.google.com/functions/docs/calling/storage
 """
 
 
@@ -43,7 +46,7 @@ def redact_gcs(event, context):
 
     # Construct buckets and blobs
     input_bucket_obj = storage_client.get_bucket(event['bucket'])
-    input_byte_obj = input_bucket_obj.get_blob(event['name'])    #['selfLink']
+    input_byte_obj = input_bucket_obj.get_blob(event['name'])
     input_bytes = input_byte_obj.download_as_bytes()
 
     output_bucket_obj = storage_client.get_bucket(destination_bucket)
@@ -55,7 +58,7 @@ def redact_gcs(event, context):
 
 
 def redact_image_all_text(project, input_bytes):
-    """Take byets image and redact all tax"""
+    """Take bytes image and redact all text"""
     # Construct client
     dlp_client = dlp_v2.DlpServiceClient()
 
