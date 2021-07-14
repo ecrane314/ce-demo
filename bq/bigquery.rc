@@ -1,0 +1,4 @@
+[query]
+--use_legacy_sql=false
+--max_rows=100
+--maximum_bytes_billed=10000000
