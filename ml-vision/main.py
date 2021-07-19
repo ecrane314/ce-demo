@@ -28,52 +28,78 @@ from google.cloud import storage
 from google.cloud import vision
 
 
-def redact_face_gcs(event, context):
-    """Pull image, redact, push image using client libraries"""
-    # CLIENT
-    storage_client = storage.Client()
+
+def sort_faces_gcs(event, context):
+    """Pull image, detect faces, sort to default or face bucket"""
 
     # CONFIG
     project = 'sc-nlp'
-    # inbound bucket is in deploy call
+    # inbound bucket in deploy call
     # default is destination_bucket with no face, quarantine is pictures with faces
     destination_bucket = "no_face_detected"
     quarantine_bucket = "face_detected"
     output_filename = event['name']
 
-    # Construct buckets and blobs
-    input_bucket_obj = storage_client.get_bucket(event['bucket'])
-    input_byte_obj = input_bucket_obj.get_blob(event['name'])
-    input_bytes = input_byte_obj.download_as_bytes()
+    # CLIENT(s)
+    storage_client = storage.Client()
+    # leaving in function for testing
+    #vision_client = vision.ImageAnnotatorClient()
 
-    output_bucket_obj = storage_client.get_bucket(destination_bucket)
+
+    # Pull Image
+    image = get_face_bytes(storage_client, event['name'], event['bucket'])
+
+    # Detect Faces
+    result = detect_faces(vision_client, project, image)
+
+    #TODO Select destination based on result
+    if result == True :
+        output_bucket_obj = storage_client.get_bucket(quarantine_bucket)
+    else :
+        output_bucket_obj = storage_client.get_bucket(destination_bucket)
     output_blob = output_bucket_obj.blob(output_filename)
 
-    # Write bytes to object and upload
-    result = redact_image_all_text(project, input_bytes)
-    output_blob.upload_from_string(result)
+    # Upload image to proper destination
+    output_blob.upload_from_string(image)
 
 
-def detect_faces(project, input_bytes):
-    """Take bytes image and redact all text"""
-    # Construct client
-    dlp_client = dlp_v2.DlpServiceClient()
 
-    # Construct the image_redaction_config,
-    # Indicating DLP should redact all text
-    parent = f"projects/{project}"
-    image_redaction_configs = [{"redact_all_text": True}]
-    byte_item = {"type_": dlp_v2.FileType.IMAGE, "data": input_bytes}
+def get_face_bytes(client, name, bucket):
+    """Get image bytes from GCS"""
 
-    # Call DLP API
-    response = dlp_client.redact_image(
-        request={
-            "parent": parent,
-            "image_redaction_configs": image_redaction_configs,
-            "byte_item": byte_item,
-        }
-    )
+    # Construct buckets and blobs
+    input_bucket_obj = client.get_bucket(bucket)
+    input_byte_obj = input_bucket_obj.get_blob()
+    
+    return input_byte_obj.download_as_bytes()
+
+
+def detect_faces(image):
+    """Take bytes image and detect if faces are present"""
+    vision_client = vision.ImageAnnotatorClient()
+    
+    # Construct the vision config for faces
+    image = vision.Image(content = image)
+    #features = vision.Feature(1)
+
+    #request = vision.AnnotateImageRequest(
+    #    image=image, 
+    #    features=features
+    #)
+
+    # Call Vision API
+ #   response = vision_client.batch_annotate_images(request=request)
+    response = vision_client.face_detection(image=image)
+
 
     # Parse and return response bytes
-    redacted_bytes = response.redacted_image
-    return redacted_bytes
+    print(response)
+    vision_result = response  #TODO what is response format?
+    # Bool 
+    return vision_result
+
+#For testing 
+if __name__ == "__main__":
+    with open("faces_and_car.jpg", "rb") as f:
+        image = f.read()
+    detect_faces(image)
