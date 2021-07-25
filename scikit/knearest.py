@@ -29,6 +29,9 @@ iris = datasets.load_iris()
 # iris.data is numpy ndarray, first says all rows, second is first 2 cols
 X = iris.data[:, :2]
 y = iris.target
+print("X: ",X, "y: ",y)
+print("type X", type(X))
+print("type y", type(y))
 
 h = .02  # step size in the mesh
 
@@ -36,13 +39,9 @@ h = .02  # step size in the mesh
 cmap_light = ListedColormap(['orange', 'cyan', 'cornflowerblue'])
 cmap_bold = ['darkorange', 'c', 'darkblue']
 
-print(type(iris))
-#print(iris.data)
-print(type(X))
-print(X)
 
 for weights in ['uniform', 'distance']:
-    # we create an instance of Neighbours Classifier and fit the data.
+    # we create an instance of Neighbours Classifier and fit it to the data.
     clf = neighbors.KNeighborsClassifier(n_neighbors, weights=weights)
     clf.fit(X, y)
 
@@ -50,7 +49,7 @@ for weights in ['uniform', 'distance']:
     # point in the mesh [x_min, x_max]x[y_min, y_max].
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-    
+
     #TODO what is a Numpy meshgrid? ravel method?
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
