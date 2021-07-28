@@ -12,11 +12,13 @@ sequenceDiagram
 
     src ->> stage: transfer service (prefix if needed)
     activate stage
-    stage -->> topic: publish notification    deactivate stage
-    %%
-    topic -->> gcf: functions event triggers
-    %%gcf ->> topic: pull event
+    stage -->> topic: publish notification
+    deactivate stage
     
+    %% Is event a pull that needs ack?
+    topic -->> gcf: functions event triggers
+    
+    %%gcf ->> topic: pull event
     activate topic
     %%topic -->> gcf: image GCS Details
     gcf ->> src: pull image data
