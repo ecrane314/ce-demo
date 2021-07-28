@@ -33,6 +33,14 @@ def push_obj():
         #text_bytes = f.read()
         lor_blob.upload_from_file(f)
 
+def get_acl():
+    bucket_obj = client.get_bucket(SOURCE_BUCKET)
+    acl = bucket_obj.acl
+    with open("scratch", "a") as f:
+        f.write(str(acl))
+    return acl
+
 if __name__ == "__main__":
     #pull_obj()
-    push_obj()
+    #push_obj()
+    print(get_acl())

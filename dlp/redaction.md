@@ -12,17 +12,18 @@ sequenceDiagram
 
     src ->> stage: transfer service (prefix if needed)
     activate stage
-    stage -->> topic: publish notification
-    deactivate stage
-    gcf ->> topic: pull event
+    stage -->> topic: publish notification    deactivate stage
+    %%
+    topic -->> gcf: functions event triggers
+    %%gcf ->> topic: pull event
     
     activate topic
-    topic -->> gcf: image GCS Details
+    %%topic -->> gcf: image GCS Details
     gcf ->> src: pull image data
     src -->> gcf: images bytes
     gcf ->> dlp: redaction request
     dlp -->> gcf: redacted image bytes
-    gcf ->> db: write final image
+    gcf ->> db: write redacted image
     gcf ->> topic: acknowledge
     deactivate topic
 
