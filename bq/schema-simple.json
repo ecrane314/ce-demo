@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "REQUIRED",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "device",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "temperature",
+    "type": "FLOAT"
+  }
+]
