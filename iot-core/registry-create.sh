@@ -3,4 +3,4 @@
 gcloud iot registries create iotlab-registry \
     --project=$PROJECT_ID \
     --region=$MY_REGION \
-    -event-notification-config=project/$PROJECT_ID/topics/iotlab
+    --event-notification-config=topic=projects/$PROJECT_ID/topics/iotlab

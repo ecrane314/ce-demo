@@ -1,0 +1,10 @@
+Nov 16 2021
+
+https://cloud.google.com/dataflow/docs/guides/templates/using-flex-templates
+
+- Create service account with dataflow service agent and dataflow admin
+- Create bucket. export BUCKET="ce-demo1-dataflow";  gsutil mb gs://$BUCKET
+- Create topic and subscriptoions.  
+    export TOPIC="messages"; export SUBSCRIPTION="ratings"; gcloud pubsub topics create $TOPIC; \
+    gcloud pubsub subscriptions create --topic $TOPIC $SUBSCRIPTION
+- Create scheduler job, will be enabled when created, but can pause
