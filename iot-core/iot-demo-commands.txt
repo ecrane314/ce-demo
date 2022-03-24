@@ -1,14 +1,50 @@
- node cloudiot_mqtt_example_nodejs.js \
+#  $source config.sh
+1
+gcloud services enable cloudiot.googleapis.com
+gcloud services enable pubsub.googleapis.com  // or pubsublite
+
+2
+gcloud pubsub topics create $TOPIC
+
+3
+# Set PROJECT_ID   MY_REGION
+gcloud iot registries create $REGISTRY \
+    --project=$PROJECT_ID \
+    --region=$MY_REGION \
+    --event-notification-config=topic=projects/$PROJECT_ID/topics/$TOPIC
+
+4
+openssl req -x509 -newkey rsa:2048 -keyout rsa_private.pem -nodes \
+    -out rsa_cert.pem -subj "/CN=unused"
+
+5
+gcloud iot device create $DEVICE --region=$MY_REGION --registry=$REGISTRY \
+    --public-key path=rsa_cert.pem,type=rs256
+
+6
+git pull https://github.com/GoogleCloudPlatform/python-docs-samples.git
+cp rsa_private.pem python-docs-samples/iot/api-client/mqtt_example/
+
+7
+gcloud pubsub subscription create $SUBSCRIPTION --topic=$TOPIC
+curl https://pki.goog/roots.pem > roots.pem
+python cloudiot_mqtt_example.py \
+    --registry_id=$REGISTRY \
+    --cloud_region=$MY_REGION \
+    --project_id=$PROJECT_ID \
+    --device_id=$DEVICE \
+    --algorithm=RS256 \
+    --private_key_file=rsa_private.pem
+ 
+  node cloudiot_mqtt_example_nodejs.js \
     mqttDeviceDemo \
     --projectId=ce-demo2 \
     --cloudRegion=us-central1 \
-    --registryId=raspi-registry \
+    --registryId= \
     --deviceId=laptop-device \
     --privateKeyFile=rsa_private.pem \
     --numMessages=25 \
     --algorithm=RS256
 
-
-
-
-gcloud pubsub subscriptions pull --auto-ack projects/ce-demo2/subscriptions/my-subscription
+8
+gcloud pubsub subscriptions pull --auto-ack projects/$PROJECT_ID/subscriptions/$SUBSCRIPTION
