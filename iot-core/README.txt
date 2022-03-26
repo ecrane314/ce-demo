@@ -2,12 +2,12 @@
 Source your config, and then...
 
 1 Enable APIs - UI or CLI 
-2 Create PubSub Topic
+2 Create PubSub Topic, and Subscription so data is retained
 3 Create a Device Registry
 4 Generate Device Key Pair
 5 Create Device in Registry
 6 Provision Device, clone sample app and copy private key
-7 Publish data, frst get Google RootCA and create subscription so data is retained
+7 Publish data
 8 Consume data, pull from sub
 
 === Qwiklab ===
