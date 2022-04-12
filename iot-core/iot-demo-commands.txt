@@ -22,9 +22,10 @@ openssl req -x509 -newkey rsa:2048 -keyout rsa_private.pem -nodes \
 gcloud iot devices create $DEVICE --region=$MY_REGION --registry=$REGISTRY \
     --public-key path=rsa_cert.pem,type=rs256
 
-6
-sudo apt install python3 python3-dev python3-venv python3-pip git
-python3 -m venv env
+6 ===== # package this in a startup script, if you like
+sudo apt install python3 python3-dev python3-venv python3-pip git \
+    #install python and git
+python3 -m venv env   #create virtual environment
 git clone https://github.com/ecrane314/ce-demo.git
 source env/bin/activate
 source ce-demo/iot-core/config.sh
@@ -32,8 +33,9 @@ source ce-demo/iot-core/config.sh
 git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git
 cd, pip install -r requirements
 cp private key .
-source config.sh
 curl https://pki.goog/roots.pem > roots.pem
+===============
+
 
 7
 python cloudiot_mqtt_example.py \
