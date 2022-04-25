@@ -1,4 +1,4 @@
-#publish sense hat to a gcp pub/sub/topic
+#publish sense hat to a gcp pubsub topic
 from google.cloud import pubsub_v1
 #from sense_hat import SenseHat
 import time
@@ -20,7 +20,6 @@ topic_path = pub.topic_path('ce-demo2', 'message-topic')
  #   print("humidity: "+ str(humidity))
  #   print("Trial: "+str(n))
  #   n += 1
-:q
     pub.publish(topic_path, b'This is Temperature in Celcius: +str(n)', )
   #  time.sleep(2)
 
