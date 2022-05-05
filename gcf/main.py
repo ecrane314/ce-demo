@@ -1,3 +1,4 @@
+'''
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
@@ -12,17 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
+See README.md for details
+
+Run this locally...
+functions_framework --target hello_get --debug
+
+Deploy this to GCF by running...
+gcloud functions deploy --region us-central1
+'''
+
+#import sys
+import functions_framework
 
 from flask import escape
-from flask import Flask
 
-app = Flask(__name__)
-
-@app.route("/")
-def hello_world():
-    return ('Hello, World! This is / on localhost')
-
+@functions_framework.http
 def hello_get(request):
     """HTTP Cloud Function.
     Args:
@@ -37,7 +42,8 @@ def hello_get(request):
         Functions, see the `Writing HTTP functions` page.
         <https://cloud.google.com/functions/docs/writing/http#http_frameworks>
     """
-    return 'Hello World! This is the hello_get function'
+    return f'Hello World! This is hello_get python function with \
+        @functions_framework.http decorator. Request is {request} \n'
 
 def hello_http(request):
     """HTTP Cloud Function.
@@ -58,5 +64,4 @@ def hello_http(request):
         name = request_args['name']
     else:
         name = 'World'
-    return 'Hello {}!'.format(escape(name))
-
+    return f'Hello {escape(name)}!'
