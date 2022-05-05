@@ -14,15 +14,15 @@
 
 import sys
 
-# [START functions_helloworld_http]
-# [START functions_http_content]
 from flask import escape
+from flask import Flask
 
-# [END functions_helloworld_http]
-# [END functions_http_content]
+app = Flask(__name__)
 
+@app.route("/")
+def hello_world():
+    return ('Hello, World! This is / on localhost')
 
-# [START functions_helloworld_get]
 def hello_get(request):
     """HTTP Cloud Function.
     Args:
@@ -37,11 +37,8 @@ def hello_get(request):
         Functions, see the `Writing HTTP functions` page.
         <https://cloud.google.com/functions/docs/writing/http#http_frameworks>
     """
-    return 'Hello World!'
-# [END functions_helloworld_get]
+    return 'Hello World! This is the hello_get function'
 
-
-# [START functions_helloworld_http]
 def hello_http(request):
     """HTTP Cloud Function.
     Args:
@@ -62,5 +59,4 @@ def hello_http(request):
     else:
         name = 'World'
     return 'Hello {}!'.format(escape(name))
-# [END functions_helloworld_http]
 
