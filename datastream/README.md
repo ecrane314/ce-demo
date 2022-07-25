@@ -18,7 +18,11 @@ The stream uses GCS and Pub/Sub for staging temp and in-flight data.
 1. Craete BQ Dataset
 1. Deploy Dataflow Job
 
+# Part I
 ## Create Source
+In cloudshell, git clone this repo
+On two different tabs, source config.sh
+
 ```
 gcloud sql instances create ${MYSQL_INSTANCE} \
     --cpu=2 --memory=10GB \
@@ -30,20 +34,24 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
 ```
 
 __Review dependency before running__ 
+
 `source config2.sh` Remember `source config*` doesn't work correctly and 2 must be done after some prereqs are created
 
-`gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${PROJECT_ID}`
+`gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer $BUCKET`
 
 `gcloud sql import sql ${MYSQL_INSTANCE} gs://${PROJECT_ID}/resources/create_mysql.sql --quiet`
 
 
 ## Create Bucket
 Create a bucket and have it post creation notifications to the topic, once it's created.
+
 `gsutil mb gs://${PROJECT_ID}`
 
 `gsutil cp create_mysql.sql gs://${PROJECT_ID}/resources/create_mysql.sql`
 
-__Review dependency before running__ `gsutil notification create -f "json" -p "data/" -t "${TOPIC}" "gs://${PROJECT_ID}"`
+__Review dependency before running__ 
+
+`gsutil notification create -f "json" -p "data/" -t "${TOPIC}" "$BUCKET"`
 
 
 ## Create Pub/Sub Topic and Subscription
@@ -51,6 +59,7 @@ __Review dependency before running__ `gsutil notification create -f "json" -p "d
 
 `gcloud pubsub subscriptions create $SUBSCRIPTION --topic=$TOPIC`
 
+# Part II
 ## Create Datastream Profile Definitions
 `gcloud services enable datastream.googleapis.com`
 
@@ -58,11 +67,14 @@ Create the DB and Storage profiles.
 
 #TODO Remove after fixed -- Remember User/PW must match source
 
+
+__Review dependency before running__ 
+
 ```
-gcloud datastream connection-profiles create ${SOURCE_MYSQL_PROFILE} \
+gcloud datastream connection-profiles create ${SRC_MYSQL_PROFILE} \
           --location=us-central1 --type=mysql \
           --mysql-password=password123 --mysql-username=root \
-          --display-name=${SOURCE_MYSQL_PROFILE} --mysql-hostname=${DB_IP_ADDRESS} \
+          --display-name=${SRC_MYSQL_PROFILE} --mysql-hostname $DB_IP_ADDRESS \
           --mysql-port=3306 --static-ip-connectivity
 ```
 
@@ -73,10 +85,23 @@ gcloud datastream connection-profiles create ${DEST_GCS_PROFILE} \
           --display-name=${DEST_GCS_PROFILE}
 ```
 
+Optionally, test your DB stream. The GCS will not have a test.
 
 ## Create Datastream Stream
 
-__Review dependency before running__ Create the stream
+Create the stream. Remember the json files must be updated to match your source.
+
+```
+gcloud datastream streams create $STREAM --location=us-central1 \
+          --display-name=$STREAM --source=$SRC_MYSQL_PROFILE \
+          --mysql-source-config=$STREAM_SRC_CONFIG \
+          --destination=$DEST_GCS_PROFILE \
+          --gcs-destination-config=$STREAM_DEST_CONFIG \
+          --backfill-all --force
+```
+
+`gcloud datastream streams update $STREAM --location=us-central1 \
+          --state=RUNNING --update-mask=state`
 
 ## Craete BQ Dataset
 
@@ -105,3 +130,51 @@ inputFileFormat="avro"
 # Review Results
 
 Review the data in BQ preview and you're done.
+Nost Postgres coming soon.
+Note the 'Future tables' option in the inclusion logic.
+Notice the --backfill-all option.
+
+#BUG The gcloud connection-profiles create might have a bug. Notice no '=' allowed on hostname
+#BUG gcloud datastreams streams create doesn't work without --force flag
+
+#BUG
+
+```
+student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream streams list --location us-central1
+NAME: test-stream
+STATE: NOT_STARTED
+SOURCE: projects/469032676304/locations/us-central1/connectionProfiles/mysql-cp
+DESTINATION: projects/469032676304/locations/us-central1/connectionProfiles/gcs-cp
+CREATE_TIME: 2022-07-25T22:15:19.738781015Z
+UPDATE_TIME: 2022-07-25T22:19:27.884373269Z
+
+
+student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream routes list --location us-central1
+ERROR: (gcloud.datastream.routes.list) argument --location: --private-connection must be specified.
+Usage: gcloud datastream routes list (--private-connection=PRIVATE_CONNECTION : --location=LOCATION) [optional flags]
+  optional flags may be  --filter | --help | --limit | --location |
+                         --page-size | --sort-by | --uri
+
+For detailed information on this command and its flags, run:
+  gcloud datastream routes list --help
+```
+
+
+```
+student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream streams list --location=us-central1
+NAME: test-stream
+STATE: NOT_STARTED
+SOURCE: projects/469032676304/locations/us-central1/connectionProfiles/mysql-cp
+DESTINATION: projects/469032676304/locations/us-central1/connectionProfiles/gcs-cp
+CREATE_TIME: 2022-07-25T22:15:19.738781015Z
+UPDATE_TIME: 2022-07-25T22:19:27.884373269Z
+
+student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream routes list --location=us-central1
+ERROR: (gcloud.datastream.routes.list) argument --location: --private-connection must be specified.
+Usage: gcloud datastream routes list (--private-connection=PRIVATE_CONNECTION : --location=LOCATION) [optional flags]
+  optional flags may be  --filter | --help | --limit | --location |
+                         --page-size | --sort-by | --uri
+
+For detailed information on this command and its flags, run:
+  gcloud datastream routes list --help
+```

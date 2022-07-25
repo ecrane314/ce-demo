@@ -1,0 +1,15 @@
+{
+  "include_objects": {
+    "mysql_databases": [
+      {
+        "database": "test",
+        "mysql_tables": [
+          {
+            "table": "example_table"
+          }
+        ]
+      }
+    ]
+  },
+  "exclude_objects": {}
+}
