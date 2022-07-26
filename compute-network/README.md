@@ -28,14 +28,24 @@ various types. NOTE: Regional Externals also require their own subnet.
 
 ## Private Services Connect / Access incl Cloud SQL
 
-Current subnets, observe CIDR blocks
-`gcloud compute networks subnets list --network custom-vpc`
+Open your VPCs page, open your network of choice, and navigate to the private services tab.
 
-Create your PSC connection, then look at peering
-`gcloud compute networks peerings list`
+For your current subnets, observe their CIDR blocks. Swap network name
+```
+gcloud compute networks subnets list --network custom-vpc
+```
+
+In console, reserve your IP range, create your PSC connection, and then look at peering it created
+```
+gcloud compute networks peerings list
+```
 
 Observe the route for your peering relationship
-`gcloud compute networks peerings list-routes --direction INCOMING servicenetworking-googleapis-com --network custom-vpc --region us-central1`
+```
+gcloud compute networks peerings list-routes --direction INCOMING servicenetworking-googleapis-com --network custom-vpc --region us-central1
+```
 
-Observe your instance was placed in that block
-`gcloud sql instances list`
+Create a Cloud SQL instance with private addresses and observe that your instance was placed in that block
+```
+gcloud sql instances list
+```
