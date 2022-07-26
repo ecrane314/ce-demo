@@ -25,3 +25,17 @@ various types. NOTE: Regional Externals also require their own subnet.
  --security-policy mobile-clients-policy`
 1. compute#networkEndpointGroup resource. Which points to a...
 1. Cloud function deployment
+
+## Private Services Connect / Access incl Cloud SQL
+
+Current subnets, observe CIDR blocks
+`gcloud compute networks subnets list --network custom-vpc`
+
+Create your PSC connection, then look at peering
+`gcloud compute networks peerings list`
+
+Observe the route for your peering relationship
+`gcloud compute networks peerings list-routes --direction INCOMING servicenetworking-googleapis-com --network custom-vpc --region us-central1`
+
+Observe your instance was placed in that block
+`gcloud sql instances list`
