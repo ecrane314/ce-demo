@@ -78,10 +78,12 @@ gcloud datastream connection-profiles create ${SRC_MYSQL_PROFILE} \
           --mysql-port=3306 --static-ip-connectivity
 ```
 
+Datastream does not handle the gs:// prefix so we just use the bucket name. In this case, that's our project name.
+
 ```
 gcloud datastream connection-profiles create ${DEST_GCS_PROFILE} \
           --location=us-central1 --type=google-cloud-storage \
-          --bucket=$BUCKET --root-path=/root/path \
+          --bucket=$PROJECT_ID --root-path=/path \
           --display-name=${DEST_GCS_PROFILE}
 ```
 
@@ -105,10 +107,13 @@ gcloud datastream streams create $STREAM --location=us-central1 \
 
 ## Craete BQ Dataset
 
-`bq mk dataset`
+`bq mk dataset-landing`
 
 ## Deploy Dataflow Job
 
+`gcloud services enable dataflow.googleapis.com`
+
+#TODO this doesn't work, doesn't submit correctly.
 ```
 gcloud beta dataflow flex-template run datastream-replication \
         --project="${PROJECT_ID}" --region="us-central1" \
@@ -116,7 +121,10 @@ gcloud beta dataflow flex-template run datastream-replication \
         --enable-streaming-engine \
         --parameters \
 inputFilePattern="gs://${PROJECT_ID}/data/",\
-gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION}
+gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION},\
+outputProjectId="${PROJECT_ID}",\
+outputStagingDatasetTemplate="dataset",\
+outputDatasetTemplate="dataset",\
 outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
 outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
 deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
@@ -124,6 +132,7 @@ maxNumWorkers=2,\
 autoscalingAlgorithm="THROUGHPUT_BASED",\
 mergeFrequencyMinutes=2,\
 inputFileFormat="avro"
+
 ```
 
 
