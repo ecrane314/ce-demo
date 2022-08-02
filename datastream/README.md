@@ -114,12 +114,13 @@ gcloud datastream streams create $STREAM --location=us-central1 \
 `gcloud services enable dataflow.googleapis.com`
 
 #TODO this doesn't work, doesn't submit correctly.
+
 ```
-gcloud beta dataflow flex-template run datastream-replication \
-        --project="${PROJECT_ID}" --region="us-central1" \
-        --template-file-gcs-location="gs://dataflow-templates-us-central1/latest/flex/Cloud_Datastream_to_BigQuery" \
-        --enable-streaming-engine \
-        --parameters \
+gcloud dataflow flex-template run datastream-replication \
+--project="${PROJECT_ID}" --region="us-central1" \
+--template-file-gcs-location="gs://dataflow-templates-us-central1/latest/flex/Cloud_Datastream_to_BigQuery" \
+--enable-streaming-engine \
+--parameters \
 inputFilePattern="gs://${PROJECT_ID}/data/",\
 gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION},\
 outputProjectId="${PROJECT_ID}",\
@@ -131,7 +132,7 @@ deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
 maxNumWorkers=2,\
 autoscalingAlgorithm="THROUGHPUT_BASED",\
 mergeFrequencyMinutes=2,\
-inputFileFormat="avro"
+inputFileFormat='avro'
 
 ```
 
