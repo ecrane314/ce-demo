@@ -33,15 +33,6 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
     --root-password password123
 ```
 
-__Review dependency before running__ 
-
-`source config2.sh` Remember `source config*` doesn't work correctly and 2 must be done after some prereqs are created
-
-`gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer $BUCKET`
-
-`gcloud sql import sql ${MYSQL_INSTANCE} gs://${PROJECT_ID}/resources/create_mysql.sql --quiet`
-
-
 ## Create Bucket
 Create a bucket and have it post creation notifications to the topic, once it's created.
 
@@ -49,15 +40,22 @@ Create a bucket and have it post creation notifications to the topic, once it's 
 
 `gsutil cp create_mysql.sql gs://${PROJECT_ID}/resources/create_mysql.sql`
 
-__Review dependency before running__ 
-
-`gsutil notification create -f "json" -p "data/" -t "${TOPIC}" "$BUCKET"`
-
 
 ## Create Pub/Sub Topic and Subscription
 `gcloud pubsub topics create $TOPIC`
 
 `gcloud pubsub subscriptions create $SUBSCRIPTION --topic=$TOPIC`
+
+
+## Create Object Notification to Topic
+`gsutil notification create -f "json" -p "data/" -t "${TOPIC}" "$BUCKET"`
+
+## Configure Bucket Permissions and Import SQL Data
+`source config2.sh` Remember `source config*` doesn't work correctly and 2 must be done after some prereqs are created
+
+`gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer $BUCKET`
+
+`gcloud sql import sql ${MYSQL_INSTANCE} gs://${PROJECT_ID}/resources/create_mysql.sql --quiet`
 
 # Part II
 ## Create Datastream Profile Definitions
@@ -83,7 +81,7 @@ Datastream does not handle the gs:// prefix so we just use the bucket name. In t
 ```
 gcloud datastream connection-profiles create ${DEST_GCS_PROFILE} \
           --location=us-central1 --type=google-cloud-storage \
-          --bucket=$PROJECT_ID --root-path=/path \
+          --bucket=$PROJECT_ID --root-path=/data \
           --display-name=${DEST_GCS_PROFILE}
 ```
 
@@ -102,38 +100,36 @@ gcloud datastream streams create $STREAM --location=us-central1 \
           --backfill-all --force
 ```
 
-`gcloud datastream streams update $STREAM --location=us-central1 \
+`gcloud datastream streams update $STREAM --location=us-central1\
           --state=RUNNING --update-mask=state`
 
-## Craete BQ Dataset
-
-`bq mk dataset-landing`
+## Create BQ Dataset
+#TODO make 'dataset' an env variable. Used several times in Dataflow parameters.
+`bq mk dataset`
 
 ## Deploy Dataflow Job
 
 `gcloud services enable dataflow.googleapis.com`
 
-#TODO this doesn't work, doesn't submit correctly.
 
 ```
 gcloud dataflow flex-template run datastream-replication \
 --project="${PROJECT_ID}" --region="us-central1" \
 --template-file-gcs-location="gs://dataflow-templates-us-central1/latest/flex/Cloud_Datastream_to_BigQuery" \
 --enable-streaming-engine \
---parameters \
-inputFilePattern="gs://${PROJECT_ID}/data/",\
-gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION},\
-outputProjectId="${PROJECT_ID}",\
-outputStagingDatasetTemplate="dataset",\
-outputDatasetTemplate="dataset",\
-outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
-outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
-deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
-maxNumWorkers=2,\
-autoscalingAlgorithm="THROUGHPUT_BASED",\
-mergeFrequencyMinutes=2,\
-inputFileFormat='avro'
-
+--parameters=\
+  inputFilePattern="gs://${PROJECT_ID}/data/",\
+  gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION}",\
+  outputProjectId="${PROJECT_ID}",\
+  outputStagingDatasetTemplate="dataset",\
+  outputDatasetTemplate="dataset",\
+  outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
+  outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
+  deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
+  maxNumWorkers=2,\
+  autoscalingAlgorithm="THROUGHPUT_BASED",\
+  mergeFrequencyMinutes=2,\
+  inputFileFormat="avro"
 ```
 
 
@@ -144,47 +140,6 @@ Nost Postgres coming soon.
 Note the 'Future tables' option in the inclusion logic.
 Notice the --backfill-all option.
 
+
 #BUG The gcloud connection-profiles create might have a bug. Notice no '=' allowed on hostname
 #BUG gcloud datastreams streams create doesn't work without --force flag
-
-#BUG
-
-```
-student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream streams list --location us-central1
-NAME: test-stream
-STATE: NOT_STARTED
-SOURCE: projects/469032676304/locations/us-central1/connectionProfiles/mysql-cp
-DESTINATION: projects/469032676304/locations/us-central1/connectionProfiles/gcs-cp
-CREATE_TIME: 2022-07-25T22:15:19.738781015Z
-UPDATE_TIME: 2022-07-25T22:19:27.884373269Z
-
-
-student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream routes list --location us-central1
-ERROR: (gcloud.datastream.routes.list) argument --location: --private-connection must be specified.
-Usage: gcloud datastream routes list (--private-connection=PRIVATE_CONNECTION : --location=LOCATION) [optional flags]
-  optional flags may be  --filter | --help | --limit | --location |
-                         --page-size | --sort-by | --uri
-
-For detailed information on this command and its flags, run:
-  gcloud datastream routes list --help
-```
-
-
-```
-student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream streams list --location=us-central1
-NAME: test-stream
-STATE: NOT_STARTED
-SOURCE: projects/469032676304/locations/us-central1/connectionProfiles/mysql-cp
-DESTINATION: projects/469032676304/locations/us-central1/connectionProfiles/gcs-cp
-CREATE_TIME: 2022-07-25T22:15:19.738781015Z
-UPDATE_TIME: 2022-07-25T22:19:27.884373269Z
-
-student_00_360a81feeb6c@cloudshell:~ (qwiklabs-gcp-00-84ff77e57b16)$ gcloud datastream routes list --location=us-central1
-ERROR: (gcloud.datastream.routes.list) argument --location: --private-connection must be specified.
-Usage: gcloud datastream routes list (--private-connection=PRIVATE_CONNECTION : --location=LOCATION) [optional flags]
-  optional flags may be  --filter | --help | --limit | --location |
-                         --page-size | --sort-by | --uri
-
-For detailed information on this command and its flags, run:
-  gcloud datastream routes list --help
-```

@@ -18,3 +18,5 @@ Run agent in separate process and return
 Add private key to local agent
 
 4) Copy public key, add to account
+
+self link `git clone https://github.com/ecrane314/ce-demo.git`
