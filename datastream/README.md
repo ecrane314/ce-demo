@@ -3,10 +3,12 @@ Based on https://www.cloudskillsboost.google/focuses/22949?catalog_rank=%7B%22ra
 # Background
 
 There are six componenets in this demo of data replication from a CloudSQL source into BigQuery for analytis.
-`Source DB - Datastream - Dataflow - BQ - GCS - Pub/Sub`
-Source hosts live OLTP stream and in CDC capable
-Datastream creates a CDC collector and deploys it to Dataflow
-The stream uses GCS and Pub/Sub for staging temp and in-flight data.
+`Source MySQL DB - Datastream - GCS - Pub/Sub - Dataflow - BQ`
+The source is a live OLTP db setup for binary logging and replication for CDC.
+Datastream creates a CDC collector and posts the avro deltas to the bucket.
+Notifications on the bucket post to a Pub/Sub topic.
+Dataflow pulls on a subscription on that topic to get the gcs uris.
+The Dataflow pipeline reads the files, confirms the headings, and writes to BQ or to the DLQ.
 
 # Steps
 
@@ -20,10 +22,11 @@ The stream uses GCS and Pub/Sub for staging temp and in-flight data.
 
 # Part I
 ## Create Source
-In cloudshell, git clone this repo
-On two different tabs, source config.sh
+In cloudshell, git clone this repo to get these config files and scripts.
 
 `git clone https://github.com/ecrane314/ce-demo.git`
+
+`cd ce-demo/datastream && source config.sh`
 
 ```
 gcloud sql instances create ${MYSQL_INSTANCE} \
@@ -34,6 +37,9 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
     --database-version=MYSQL_8_0 \
     --root-password password123
 ```
+
+Once the instance is live. Continue with the steps below OR run them all at once with the script `bash readme-setup.sh`. 
+
 
 ## Create Bucket
 Create a bucket and have it post creation notifications to the topic, once it's created.
@@ -120,28 +126,30 @@ gcloud dataflow flex-template run datastream-replication \
 --template-file-gcs-location="gs://dataflow-templates-us-central1/latest/flex/Cloud_Datastream_to_BigQuery" \
 --enable-streaming-engine \
 --parameters=\
-  inputFilePattern="gs://${PROJECT_ID}/data/",\
-  gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION}",\
-  outputProjectId="${PROJECT_ID}",\
-  outputStagingDatasetTemplate="dataset",\
-  outputDatasetTemplate="dataset",\
-  outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
-  outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
-  deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
-  maxNumWorkers=2,\
-  autoscalingAlgorithm="THROUGHPUT_BASED",\
-  mergeFrequencyMinutes=2,\
-  inputFileFormat="avro"
+inputFilePattern="gs://${PROJECT_ID}/data/",\
+gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION}",\
+outputProjectId="${PROJECT_ID}",\
+outputStagingDatasetTemplate="dataset",\
+outputDatasetTemplate="dataset",\
+outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
+outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
+deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
+maxNumWorkers=2,\
+autoscalingAlgorithm="THROUGHPUT_BASED",\
+mergeFrequencyMinutes=2,\
+inputFileFormat="avro"
 ```
 
 
 # Review Results
 
-Review the data in BQ preview and you're done.
-Nost Postgres coming soon.
-Note the 'Future tables' option in the inclusion logic.
-Notice the --backfill-all option.
+1. Review the data in BQ preview and you're done. You may need to hard refresh the BQ UI to see the tables.
+1. Try using the create_mysql.sql to create a new record and see results.
+1. Note the 'Future tables' option in the inclusion logic. There is behavior defined on how existing table schema changes will be handled.
+Notice the --backfill-all option. Backfill and sync are charged at different rates.
+1. Note Postgres coming soon. (as of Aug 2022)
 
 
 #BUG The gcloud connection-profiles create might have a bug. Notice no '=' allowed on hostname
 #BUG gcloud datastreams streams create doesn't work without --force flag
+#BUG the gs:// prefix is not handled but does NOT throw an error even though it's invalid. You can click it in the Datastream UI and the GCS ui will tell you it's invalid.

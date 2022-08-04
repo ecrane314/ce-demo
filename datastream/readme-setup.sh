@@ -65,3 +65,21 @@ bq mk dataset
 ## Deploy Dataflow Job
 
 gcloud services enable dataflow.googleapis.com
+
+gcloud dataflow flex-template run datastream-replication \
+--project="${PROJECT_ID}" --region="us-central1" \
+--template-file-gcs-location="gs://dataflow-templates-us-central1/latest/flex/Cloud_Datastream_to_BigQuery" \
+--enable-streaming-engine \
+--parameters=\
+inputFilePattern="gs://${PROJECT_ID}/data/",\
+gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION}",\
+outputProjectId="${PROJECT_ID}",\
+outputStagingDatasetTemplate="dataset",\
+outputDatasetTemplate="dataset",\
+outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
+outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
+deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\
+maxNumWorkers=2,\
+autoscalingAlgorithm="THROUGHPUT_BASED",\
+mergeFrequencyMinutes=2,\
+inputFileFormat="avro"
