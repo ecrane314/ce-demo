@@ -23,6 +23,8 @@ The stream uses GCS and Pub/Sub for staging temp and in-flight data.
 In cloudshell, git clone this repo
 On two different tabs, source config.sh
 
+`git clone https://github.com/ecrane314/ce-demo.git`
+
 ```
 gcloud sql instances create ${MYSQL_INSTANCE} \
     --cpu=2 --memory=10GB \
