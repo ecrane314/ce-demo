@@ -38,6 +38,17 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
     --root-password password123
 ```
 
+## Create Source Alternative
+[https://cloud.google.com/datastream/docs/private-connectivity](Private Connectivity to Datastream)
+If you're restricted to private networks, you'll need an intermediate CloudSQL Auth Proxy to allow the Datastream workers to connect to your instance. Transitive VPC peering is not supported. Run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) and then start the proxy with those instructions, like `nohup ./cloud_sql_proxy -instances=ce-demo1:us-central1:mysql-db=tcp:0.0.0.0:3306 &`. While that's running... continue
+
+[Install mysql client](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install-linux-quick.html)
+Need to setup apt repo for mysql. Need to download from Oracle.
+Get it to machine and run.  Once done, install `sudo apt install mysql-client` to get the mysql client.
+
+`mysql -u root -p --host <proxy internal IP> --port 3306` to connect. See that the proxy recognized the new connection.
+
+
 Once the instance is live. Continue with the steps below OR run them all at once with the script `bash readme-setup.sh`. 
 
 
@@ -150,6 +161,6 @@ Notice the --backfill-all option. Backfill and sync are charged at different rat
 1. Note Postgres coming soon. (as of Aug 2022)
 
 
-#BUG The gcloud connection-profiles create might have a bug. Notice no '=' allowed on hostname
+Fixed--- The `gcloud connection-profiles create` might have a bug. Notice no '=' allowed on hostname, throws error.
 #BUG gcloud datastreams streams create doesn't work without --force flag
 #BUG the gs:// prefix is not handled but does NOT throw an error even though it's invalid. You can click it in the Datastream UI and the GCS ui will tell you it's invalid.
