@@ -13,7 +13,7 @@ export STREAM=test-stream
 export STREAM_SRC_CONFIG=mysql-source-config.json
 export STREAM_DEST_CONFIG=gcs-destination-config.json
 
-#TODO plug in json file names above
+export DATASET=landing
 
-#TODO MYSQL_USER=  In creation of DB and DS Profile
-#TODO MYSQL_PASS=
+export MYSQL_USER=root
+export MYSQL_PASS=password123

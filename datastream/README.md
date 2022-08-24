@@ -21,12 +21,13 @@ The Dataflow pipeline reads the files, confirms the headings, and writes to BQ o
 1. Deploy Dataflow Job
 
 # Part I
-## Create Source
+## Create Source [Option A]
 In cloudshell, git clone this repo to get these config files and scripts.
 
 `git clone https://github.com/ecrane314/ce-demo.git`
 
 `cd ce-demo/datastream && source config.sh`
+
 
 ```
 gcloud sql instances create ${MYSQL_INSTANCE} \
@@ -35,21 +36,30 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
     --enable-bin-log \
     --region=us-central1 \
     --database-version=MYSQL_8_0 \
-    --root-password password123
+    --root-password $MYSQL_PASS
 ```
 
-## Create Source Alternative
-[https://cloud.google.com/datastream/docs/private-connectivity](Private Connectivity to Datastream)
-If you're restricted to private networks, you'll need an intermediate CloudSQL Auth Proxy to allow the Datastream workers to connect to your instance. Transitive VPC peering is not supported. Run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) and then start the proxy with those instructions, like `nohup ./cloud_sql_proxy -instances=ce-demo1:us-central1:mysql-db=tcp:0.0.0.0:3306 &`. While that's running... continue
+## Create Source [Option B, Internal]
+[Private Connectivity to Datastream](https://cloud.google.com/datastream/docs/private-connectivity).
 
-[Install mysql client](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install-linux-quick.html)
-Need to setup apt repo for mysql. Need to download from Oracle.
-Get it to machine and run.  Once done, install `sudo apt install mysql-client` to get the mysql client.
+If you're restricted to private networks, you'll need an intermediate CloudSQL Auth Proxy to allow the Datastream workers to connect to your instance. SSH into your machine with access to the SQL instance and run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) with those instructions to run in the background:
 
-`mysql -u root -p --host <proxy internal IP> --port 3306` to connect. See that the proxy recognized the new connection.
+`nohup ./cloud_sql_proxy -instances=ce-demo1:us-central1:mysql-db=tcp:0.0.0.0:3306 &`
 
+While that's running... continue
+
+[Install mysql client](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install-linux-quick.html) You'll need to setup `apt` source repo for mysql. You'll need to download the script from Oracle,
+get it to your machine and run it to add the repo with the right keys.  Once done, install `sudo apt install mysql-client` to get the mysql client.
+
+Once that's done, run 
+`mysql -u $MYSQL_USER -p --host <proxy internal IP> --port 3306` to connect. See that the already running proxy recognized the new connection to your SQL source in the output.
+
+
+## Spin Up Resources Below
 
 Once the instance is live. Continue with the steps below OR run them all at once with the script `bash readme-setup.sh`. 
+
+You're done, wait a few minutes then check BigQuery.
 
 
 ## Create Bucket
@@ -82,15 +92,13 @@ Create a bucket and have it post creation notifications to the topic, once it's 
 
 Create the DB and Storage profiles.
 
-#TODO Remove after fixed -- Remember User/PW must match source
-
 
 __Review dependency before running__ 
 
 ```
 gcloud datastream connection-profiles create ${SRC_MYSQL_PROFILE} \
           --location=us-central1 --type=mysql \
-          --mysql-password=password123 --mysql-username=root \
+          --mysql-password=$MYSQL_PASS --mysql-username=$MYSQL_USER \
           --display-name=${SRC_MYSQL_PROFILE} --mysql-hostname $DB_IP_ADDRESS \
           --mysql-port=3306 --static-ip-connectivity
 ```
@@ -123,8 +131,8 @@ gcloud datastream streams create $STREAM --location=us-central1 \
           --state=RUNNING --update-mask=state`
 
 ## Create BQ Dataset
-#TODO make 'dataset' an env variable. Used several times in Dataflow parameters.
-`bq mk dataset`
+
+`bq mk $DATASET`
 
 ## Deploy Dataflow Job
 
@@ -140,8 +148,8 @@ gcloud dataflow flex-template run datastream-replication \
 inputFilePattern="gs://${PROJECT_ID}/data/",\
 gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${SUBSCRIPTION}",\
 outputProjectId="${PROJECT_ID}",\
-outputStagingDatasetTemplate="dataset",\
-outputDatasetTemplate="dataset",\
+outputStagingDatasetTemplate="$DATASET",\
+outputDatasetTemplate="$DATASET",\
 outputStagingTableNameTemplate="{_metadata_schema}_{_metadata_table}_log",\
 outputTableNameTemplate="{_metadata_schema}_{_metadata_table}",\
 deadLetterQueueDirectory="gs://${PROJECT_ID}/dlq/",\

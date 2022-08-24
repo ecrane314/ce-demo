@@ -1,3 +1,7 @@
+#TODO NEW VERSION FOR PRIVATE, SEE CONNECTIONS
+
+
+
 # Do the Instance setup first.
 
 source config.sh
