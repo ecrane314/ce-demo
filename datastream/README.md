@@ -103,6 +103,11 @@ gcloud datastream connection-profiles create ${SRC_MYSQL_PROFILE} \
           --mysql-port=3306 --static-ip-connectivity
 ```
 
+If instead, your source is using private connectivity with VPC peering, you'll need to first establish an IP range in your VPC and establish a peer.
+
+#TODO add the code for the above.
+
+
 Datastream does not handle the gs:// prefix so we just use the bucket name. In this case, that's our project name.
 
 ```
