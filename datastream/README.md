@@ -28,7 +28,6 @@ In cloudshell, git clone this repo to get these config files and scripts.
 
 `cd ce-demo/datastream && source config.sh`
 
-
 ```
 gcloud sql instances create ${MYSQL_INSTANCE} \
     --cpu=2 --memory=10GB \
@@ -41,6 +40,17 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
 
 ## Create Source [Option B, Internal]
 [Private Connectivity to Datastream](https://cloud.google.com/datastream/docs/private-connectivity).
+
+#TODO Fix
+```
+gcloud sql instances create ${MYSQL_INSTANCE} \
+    --cpu=2 --memory=10GB \
+    --authorized-networks=${PRV_SUBNET} \
+    --enable-bin-log \
+    --region=us-central1 \
+    --database-version=MYSQL_8_0 \
+    --root-password $MYSQL_PASS
+```
 
 If you're restricted to private networks, you'll need an intermediate CloudSQL Auth Proxy to allow the Datastream workers to connect to your instance. SSH into your machine with access to the SQL instance and run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) with those instructions to run in the background:
 
@@ -107,6 +117,13 @@ If instead, your source is using private connectivity with VPC peering, you'll n
 
 #TODO add the code for the above.
 
+```
+gcloud datastream connection-profiles create ${SRC_MYSQL_PROFILE} \
+          --location=us-central1 --type=mysql \
+          --mysql-password=$MYSQL_PASS --mysql-username=$MYSQL_USER \
+          --display-name=${SRC_MYSQL_PROFILE} --mysql-hostname $DB_IP_ADDRESS \
+          --mysql-port=3306 --<PEERING VERSION>
+```
 
 Datastream does not handle the gs:// prefix so we just use the bucket name. In this case, that's our project name.
 
@@ -143,9 +160,10 @@ gcloud datastream streams create $STREAM --location=us-central1 \
 
 `gcloud services enable dataflow.googleapis.com`
 
+#TODO Blocked start because not shieldedVM
 
 ```
-gcloud dataflow flex-template run datastream-replication \
+gcloud dataflow flex-template run datastream-replication2 \
 --project="${PROJECT_ID}" --region="us-central1" \
 --template-file-gcs-location="gs://dataflow-templates-us-central1/latest/flex/Cloud_Datastream_to_BigQuery" \
 --enable-streaming-engine \
