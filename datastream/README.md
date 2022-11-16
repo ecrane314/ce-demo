@@ -52,9 +52,11 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
     --root-password $MYSQL_PASS
 ```
 
-If you're restricted to private networks, you'll need an intermediate CloudSQL Auth Proxy to allow the Datastream workers to connect to your instance. SSH into your machine with access to the SQL instance and run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) with those instructions to run in the background:
+If you're using private networks, you'll need an intermediary machine running CloudSQL Auth Proxy to allow the Datastream workers to connect to your CloudSQL instance. SSH into your machine with access to the SQL instance and run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) with those instructions to run in the background. 
 
-`nohup ./cloud_sql_proxy -instances=ce-demo1:us-central1:mysql-db=tcp:0.0.0.0:3306 &`
+Run `gcloud sql instances describe <name>` to get the connection string. Use the local host address because that's where we're listening. Then run the proxy with `nohup` and `&`. It will be listening for connections.
+
+`nohup ./cloud_sql_proxy -instances=ce-demo1:us-central1:mysql-db=tcp:127.0.0.1:3306 &`
 
 While that's running... continue
 
