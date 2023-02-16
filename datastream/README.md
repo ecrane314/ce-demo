@@ -54,7 +54,7 @@ gcloud sql instances create ${MYSQL_INSTANCE} \
 
 If you're using private networks, you'll need an intermediary machine running CloudSQL Auth Proxy to allow the Datastream workers to connect to your CloudSQL instance. SSH into your machine with access to the SQL instance and run the [Proxy Setup](https://cloud.google.com/sql/docs/mysql/sql-proxy) with those instructions to run in the background. 
 
-Run `gcloud sql instances describe <name>` to get the connection string. Use the address on which you want to listen. For example, 10.0.0.2 because that's our address from DHCP and where we're listening for local connection requests. Then run the proxy with `nohup` and `&`. It will be listening for connections. Adding `nohup` to the front will redirect output to log and not clutter your workspace. To troubleshoot, don't use this and read output right on the screen. It may also let you run this and close out the terminal while keeping it running, though it may have already been updated to do this. Otherwise, consider running it as a service so it stays up.
+Run `gcloud sql instances describe <name>` to get the connection string. Use the address on which you want to listen. For example, 10.0.0.2 because that's our address from DHCP and where we're listening for local connection requests. Then run the proxy with `nohup` and `&`. It will be listening for connections. Adding `nohup` to the front will redirect output to log and not clutter your workspace. It will also keep the connection alive when you disconnect from the shell. To troubleshoot, don't use this and read output right on the screen. It may also let you run this and close out the terminal while keeping it running, though it may have already been updated to do this. Otherwise, consider running it as a service so it stays up.
 
 `./cloud_sql_proxy -instances=ce-demo1:us-central1:mysql-db=tcp:10.0.0.2:3306 &`
 
@@ -67,7 +67,8 @@ OR DOWNLOAD HERE http://dev.mysql.com/downloads/mysql/ .
 
 Once that's done, run 
 `mysql -u $MYSQL_USER -p --host <proxy internal IP> --port 3306` to connect. See that the already running proxy recognized the new connection to your SQL source in the output.
-
+ 
+ `pgrep -a sql` should return two lines, one for the proxy and the other for the connection to SQL.
 
 ## Spin Up Resources Below
 
