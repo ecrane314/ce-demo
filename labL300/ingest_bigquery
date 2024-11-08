@@ -1,0 +1,119 @@
+#!/bin/bash
+
+# This script ingests data into BigQuery
+
+# T1 T2 ============ 
+# Set the BigQuery dataset name
+gcs_bucket="qwiklabs-gcp-02-b19833e76dd9-source-data"
+bq_dataset="da_bikeshare"
+bq_ext_table="stations_ext"
+gcp_project_id="qwiklabs-gcp-02-b19833e76dd9"
+
+
+bq mk --dataset --location=US \
+--description="Dataset for CE Demo Lab L300" \
+$bq_dataset
+
+bq mkdef --source_format=CSV --autodetect=true \
+  gs://$gcs_bucket/stations_stg.csv > mytable_def
+bq mk --table --external_table_definition=mytable_def \
+  $bq_dataset.$bq_ext_table
+
+
+
+
+bq mk --table $bq_dataset.stations
+bq load --source_format=CSV --autodetect \
+  --field_delimiter='~' \
+  $bq_dataset.stations \
+  gs://$gcs_bucket/stations.csv
+
+
+
+bq mk --table $bq_dataset.trips
+gsutil cp gs://$gcs_bucket/trips_schema .
+bq load --source_format=CSV \
+  --field_delimiter='|' \
+  $bq_dataset.trips \
+  gs://$gcs_bucket/trips.csv \
+  ./trips_schema
+
+
+
+# T3 ============
+bq show --schema $bq_dataset.stations_ext > stations_ext_schema
+bq mk --table $bq_dataset.station_normalized \
+   ./stations_ext_schema
+
+
+CREATE OR REPLACE PROCEDURE `ce_demo_lab_l300.cepf_sp_normalize_stations`()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE station_id INT64;
+  DECLARE name VARCHAR(255);
+  DECLARE normalized_name VARCHAR(255);
+  DECLARE address VARCHAR(255);
+  DECLARE property_type VARCHAR(255);
+  DECLARE number_of_docks INT64;
+  DECLARE cur CURSOR FOR
+    SELECT station_id, name, address, property_type, number_of_docks
+    FROM `ce_demo_lab_l300.stations`;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO station_id, name, address, property_type, number_of_docks;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+    SET normalized_name = name;
+    IF normalized_name LIKE '%/%' THEN
+      SET normalized_name = REPLACE(normalized_name, '/', ' & ');
+    END IF;
+    IF normalized_name LIKE '%/%' THEN
+      SET normalized_name = REPLACE(normalized_name, '/', ' at ');
+    END IF;
+
+    INSERT INTO `ce_demo_lab_l300.station_normalized` (station_id, name, address, property_type, number_of_docks)
+    VALUES (station_id, normalized_name, address, property_type, number_of_docks);
+  END LOOP;
+
+  CLOSE cur;
+END;
+
+
+
+# T4 ============
+# /generate Create a Pub/Sub topic named station-topic
+
+#1 #2 #3
+gcloud pubsub schemas create station-payload-schema --type=protocol-buffer --definition="syntax = \"proto3\";
+message Station {
+  int32 station_id = 1;
+  string name = 2;
+  string address = 3;
+  string property_type = 4;
+  int32 number_of_docks = 5;
+}"
+
+# UPDATE TO USE SCHEMA ABOVE
+gcloud pubsub topics create station-topic
+
+bq show --schema $bq_dataset.stations > schema.json
+bq mk --table --schema=schema.json $bq_dataset.stations_streaming 
+
+#4 ===check permissions, add IAM permissions from UI
+gcloud --verbosity debug pubsub subscriptions create station-bigquery-sub \
+  --topic=station-topic \
+  --topic-project=$gcp_project_id \
+  --use-topic-schema \
+  --bigquery-table=$gcp_project_id:$bq_dataset.stations_streaming
+
+
+
+
+# T5 =============
+bq show --schema $bq_dataset.stations > schema.json
+bq mk --table  --schema=schema.json $bq_dataset.stations_api

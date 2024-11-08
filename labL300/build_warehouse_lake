@@ -1,0 +1,90 @@
+# 1. Dataproc Serverless spark batch
+
+
+swap project, region, service account, input location, and temp bucket
+
+  gcloud dataproc batches submit spark \
+    --region="us-central1" \
+    --class="com.google.cloud.dataproc.templates.main.DataProcTemplate" \
+    --version="1.1" \
+    --project="qwiklabs-gcp-02-3dea95aaae6d" \
+    --jars="gs://dataproc-templates-binaries/latest/java/dataproc-templates.jar" \
+    --batch="cepf-datalake-lab-v1" \
+    --subnet="lab-snet" \
+    --service-account="lab-sa@qwiklabs-gcp-02-3dea95aaae6d.iam.gserviceaccount.com" \
+    -- --template=GCSTOBIGQUERY \
+    --templateProperty log.level="info" \
+    --templateProperty project.id="qwiklabs-gcp-04-0c7e43ec230b" \
+    --templateProperty gcs.bigquery.input.location="gs://data-qwiklabs-gcp-02-3dea95aaae6d/crimes_chicago_iucr_ref.csv" \
+    --templateProperty gcs.bigquery.input.format="csv" \
+    --templateProperty gcs.bigquery.output.dataset="crimes_ds" \
+    --templateProperty gcs.bigquery.output.table="chicago_iucr_ref" \
+    --templateProperty gcs.bigquery.temp.bucket.name="lab-spark-bucket-qwiklabs-gcp-02-3dea95aaae6d"
+
+
+
+
+SELECT
+  *
+FROM
+  crimes_ds.chicago_iucr_ref
+WHERE
+  primary_type IS NULL
+  OR description IS null
+
+
+# CODES MISMATCH  3
+CREATE OR REPLACE TABLE
+  crimes_ds.invalid_crimes_iucr AS
+SELECT
+  crime.iucr,
+  primary_type,
+  description
+FROM
+  `crimes_ds.chicago_crime` AS crime
+LEFT JOIN
+  `crimes_ds.chicago_iucr_ref` AS ref
+ON
+  crime.iucr = ref.IUCR
+WHERE
+  ref.IUCR IS NULL
+group by 1,2,3
+#nothing in reference for these crime codes
+
+
+# Descriptions wrong   4
+CREATE OR REPLACE TABLE
+  crimes_ds.matching_iucr_descriptions AS
+SELECT
+  ref.IUCR,
+  primary_type,
+  description
+FROM
+  `crimes_ds.invalid_crimes_iucr` AS invalid
+LEFT JOIN
+  `crimes_ds.chicago_iucr_ref` AS ref
+ON
+  invalid.primary_type = ref.PRIMARY_DESCRIPTION
+  AND invalid.description LIKE ref.SECONDARY_DESCRIPTION
+WHERE
+  ref.IUCR IS NOT NULL
+ORDER BY
+  2,
+  3
+
+  # 5
+  CREATE OR REPLACE TABLE
+  crimes_ds.mismatched_iucr_descriptions AS
+  SELECT
+  ref.IUCR,
+  primary_type,
+  description
+FROM
+  `crimes_ds.invalid_crimes_iucr` AS invalid
+LEFT JOIN
+  `crimes_ds.chicago_iucr_ref` AS ref
+ON
+  invalid.primary_type = ref.PRIMARY_DESCRIPTION
+  AND invalid.description LIKE ref.SECONDARY_DESCRIPTION
+WHERE
+  ref.IUCR IS NULL
