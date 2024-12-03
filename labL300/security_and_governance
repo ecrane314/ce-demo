@@ -1,0 +1,82 @@
+
+
+export project_id="qwiklabs-gcp-04-b73ce517e724"
+export log_sink="audits-to-bq"
+export user_svc_acct="customer-sa@qwiklabs-gcp-04-b73ce517e724.iam.gserviceaccount.com"
+export ConsumerBankingCustomerDomain="consumer-banking--customer--domain"
+export taxonomy="business-critical-qwiklabs-gcp-04-b73ce517e724"
+export region="us-west1"
+export pre_svc_acct="cepf-bq-user@qwiklabs-gcp-04-b73ce517e724.iam.gserviceaccount.com"
+# T1 ==============
+
+bq query --use_legacy_sql=false " \
+INSERT INTO
+  \`$project_id.customer_data_product.customer_data\`
+SELECT
+  customer_data.client_id AS client_id,
+  ssn AS ssn,
+  first_name AS first_name,
+  NULL AS middle_name,
+  last_name AS last_name,
+  dob AS dob,
+    gender,
+  [STRUCT('current' AS status,
+    customer_data.street AS street,
+    customer_data.city,
+    customer_data.state,
+    customer_data.zip AS zip_code,
+    ST_GeogPoint(customer_data.latitude,
+      customer_data.longitude) AS WKT,
+    NULL AS modify_date)] AS address_with_history,
+  [STRUCT(customer_data.phonenum AS primary,
+    NULL AS secondary,
+    NULL AS modify_date)] AS phone_num,
+  [STRUCT('current' AS status,
+    customer_data.email AS primary,
+    NULL AS secondary,
+    NULL AS modify_date)] AS email,
+    token as token, 
+    current_date() as ingest_date, 
+  cc_number AS cc_number,
+   cc_expiry AS cc_expiry,
+   cc_provider AS cc_provider, 
+   cc_ccv AS cc_ccv, 
+   cc_card_type AS cc_card_type
+    FROM
+      \`$project_id.customer_refined_data.customer_data\` customer_data
+      inner join 
+      \`$project_id.customer_refined_data.cc_customer_data\` cc_customer_data
+      ON
+      customer_data.client_id=cc_customer_data.client_id
+"
+
+
+# T2 ==============
+# setup sink
+#1
+gcloud logging sinks create $log_sink bigquery.googleapis.com/projects/$project_id/datasets/central_audit_data --log-filter='resource.type=\"audited_resource\" AND resource.labels.service=\"dataplex.googleapis.com\" AND protoPayload.serviceName=\"dataplex.googleapis.com'
+
+
+#2  
+gcloud projects add-iam-policy-binding $project_id --member="serviceAccount:service-166199749140@gcp-sa-logging.iam.gserviceaccount.com" --role="roles/bigquery.dataEditor"
+
+#Setup svc acct
+#1 
+gcloud dataplex lakes add-iam-policy-binding  $ConsumerBankingCustomerDomain --location=$region --member=serviceAccount:$user_svc_acct --role=roles/dataplex.dataOwner
+
+
+#2
+
+
+
+
+
+# T3 ==============
+#1
+gcloud dataplex policy-tags create --project=$project_id --region=$region --taxonomy=$taxonomy --tag=High --subtag=SSN
+
+#2
+gcloud dataplex policy-tags create --project=$project_id --region=$region --taxonomy=$taxonomy --tag=High --subtag=SSN --masking-rule="mask(ssn, 'last_four')"
+
+
+
