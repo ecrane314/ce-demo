@@ -66,9 +66,10 @@ gcloud dataplex lakes add-iam-policy-binding  $ConsumerBankingCustomerDomain --l
 
 
 #2
+Verificaiton step, no code to run?
 
-
-
+#Analyze Data, WIP does dataset name need to be set?
+SELECT protopayload_auditlog.methodName,   protopayload_auditlog.resourceName,  protopayload_auditlog.authenticationInfo.principalEmail,  protopayload_auditlog.requestJson, protopayload_auditlog.responseJson FROM `$project_id.central_audit_data.cloudaudit_googleapis_com_activity_*` LIMIT 1000
 
 
 # T3 ==============
