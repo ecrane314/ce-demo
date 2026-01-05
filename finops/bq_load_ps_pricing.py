@@ -1,0 +1,1 @@
+"""Use a pubsub schema to load pricing data into bigquery"""
