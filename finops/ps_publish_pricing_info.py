@@ -38,6 +38,7 @@ def publish_pricing_info(event, context):
             if isinstance(json_data, dict) and "skuGroups" in json_data:
                 for item in json_data["skuGroups"]:
                     message_data = json.dumps(item).encode("utf-8")
+                    print(f"Publishing message: {message_data}")
                     future = publisher.publish(topic_path, message_data)
                     print(f"Published message ID: {future.result()}")
             else:
@@ -50,4 +51,8 @@ def publish_pricing_info(event, context):
             print("Warning: Script output is not valid JSON. Publishing as plain text.")
             message_data = pricing_data.encode("utf-8")
             future = publisher.publish(topic_path, message_data)
-            
+    finally:
+        print("Finished function call")
+
+if __name__ == "__main__":
+    publish_pricing_info(None, None)
