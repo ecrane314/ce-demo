@@ -2,8 +2,8 @@ from google import genai
 from google.genai import types
 import wave
 
-# MODEL = "gemini-2.5-flash-preview-tts"
-MODEL = "gemini-2.5-flash-tts"
+MODEL = "gemini-2.5-flash-preview-tts"
+# MODEL = "gemini-2.5-flash-tts"
 
 # Set up the wave file to save the output:
 def wave_file(filename, pcm, channels=1, rate=24000, sample_width=2):
